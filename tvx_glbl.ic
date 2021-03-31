@@ -1,0 +1,458 @@
+/* ---------------   TVX global declarations   ------------------------ */
+
+/*   This version of TVX Copyright (c) 1986 by Bruce E. Wampler
+
+   Permission is hereby granted for free, unrestricted nonprofit
+   use of this software.  Please feel free to modify, distribute,
+   and share this software as long as you aren't making any money
+   from it.  If you want to use this code in a profit making environment,
+   please contact the author for permission.
+*/
+/*
+   Following trick allows only one file for externals.  If EXTERN is not
+   defined, then variables are decleared extern.  ONE module, tvlex.c,
+   defines EXTERN, and thus actually declares things.  If you need to
+   change one of these values (terminal definition, for example), then
+   only tvlex.c needs to be recompiled!
+*/
+#ifndef EXTERN
+#define EXTERN extern
+#define USEEXTERN /**/
+#endif
+
+/* constants defined within the next #ifndef area are the important
+   system values that define the terminal, margins, etc.  ALL variables
+   between begpatch and endpatch must be initialized for the MS-DOS cii-86
+   compiler to put them all in the same contiguous memory area.
+   This allows the tvconfig program to work properly to find the #####:
+   patch area patern.  This works on the C/80 CP/M version, too, but
+   has never been tried on unix since the termcap driver is normally used.
+*/
+
+#ifndef USEEXTERN
+    EXTERN char begpatch[6] = {'#','#','#','#','#',':'};
+
+#include "tvx_term.ic"		/* include terminal definitions */
+
+/* the order of lexsym values MUST be in the order specified here to
+   correspond to the order of the switch in edit()
+*/
+/* ---------------------------- Standard TVX --------------------------- */
+#ifdef TVX_EM			/* define standard command set */
+    EXTERN char lexsym[LEXVALUES+1] = { '@', 'r', 'l', 'd', 'u',
+      4, 21, 8, 'k', 'i', 11, '"', '\'', ',', '.', 'f', 6, 'p',
+      'b', 'e', 2, 'v', 'o', '/', 's', 'g', 23, 25, 24, ';', '&',
+      'm', ':', '=', 7, 9, '{', 'a', 16, '?', 'h', 20, 'c', 'j', 't',
+      'n', 14, 15, 5, 18, '#', '*','(', ')','~'};
+/*  SYNONYM and function key list */
+
+    EXTERN char loop_beg = '<';
+    EXTERN char loop_end = '>';
+
+    EXTERN char synofr[20] =	/* from table */
+      {' ',13,'[',']',000,000,000,000,000,000,00,00,00,00,00,00,00,00,00,00};
+    EXTERN char synoto[20] =		/* translate to table */
+      {'r','d','{','{',000,0,000,00,00,000,00,00,00,00,00,00,00,00,00,00};
+#ifdef IBMPC
+    EXTERN char funkey = 0;		/* leading char for function key */
+    EXTERN char funchar[50] =	/* code sent by function key */
+      {	 /* make keypad function keys work like you would expect */
+	 71,  72,  73,  75,  77,  79,  82,  83,  80,  81,
+	 59, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+      };
+    EXTERN char funcmd[50] =	/* equivalent command */
+      {
+	'b',  21, 'h', 'l', 'r', 'e', 'i',  11,   4, 'p',
+	'&', 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+      };
+#else				/* regular terminal synonyms */
+    EXTERN char funkey = 0;		/* leading char for function key */
+    EXTERN char funchar[50] =	/* code sent by function key */
+      {
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000
+      };
+    EXTERN char funcmd[50] =	/* equivalent command */
+      {
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000
+      };
+#endif
+#endif		/* TVX_EM */
+
+/* ---------------------------- VI EMULATOR --------------------------- */
+#ifdef VI_EM			/* define vi emulation set */
+    EXTERN char lexsym[LEXVALUES+1] =
+      {
+      /*     1    2    3    4    5    6    7    8   9   10 */
+      '_',   2,   4,   6,   7,   8,  12, '=', '!', '#', '$',
+	   '*', '/', ':', 'J', '?', '@', 'A', 'C', 'D', 'G',
+	   'H', 'I',  14,  16, 'L', 'M', 'N', 'O', 'P', 'T',
+	   'X', 'Y', 'Z', '^', 'a', 'b', 'c', 'd',  21, 'i',
+	   '+', 'K', 'l', 'm', 'n', 'o', 'p', 'r', 's',  27,
+	   'w', 'x', 'y', '~'
+      };
+    EXTERN char loop_beg = '<';
+    EXTERN char loop_end = '>';
+
+/*  SYNONYM and function key list */
+#ifdef VI_MODS			/* extended definitions */
+    EXTERN char synofr[20] =	/* from table */
+/*          ^J  ^M  ^R  ^T    */
+      { 'h',10, 13, 18, 20,' ','B','Q','W','`','q','z','j','k',
+	11,127,00,00,00,00};
+    EXTERN char synoto[20] =		/* translate to table */
+      {  8, 14,'+', 12,'T','l','b','T','w','M','T', 12,'+','K',
+	16,'X',00,00,00,00};
+#else				/* regular definitions */
+    EXTERN char synofr[20] =	/* from table */
+/*          ^J  ^M  ^R  ^T    */
+      { 'h',10, 13, 18, 20,' ','B','Q','W','`','q','z','j','k',
+	11,127,00,00,00,00};
+    EXTERN char synoto[20] =		/* translate to table */
+      {  8, 14,'+', 12,'T','l','b','T','w','M','T', 12, 14, 16,
+	16,'X',00,00,00,00};
+#endif
+
+#ifdef IBMPC
+    EXTERN char funkey = 0;		/* leading char for function key */
+    EXTERN char funchar[50] =	/* code sent by function key */
+      {	 /* make keypad function keys work like you would expect */
+	 71,  72,  73,  75,  77,  79,  82,  83,  80,  81,
+	 00, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+      };
+    EXTERN char funcmd[50] =	/* equivalent command */
+      {
+	'H', 'K',   2,   8, 'l', 'L', 'i', 'X', '+',   6,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+      };
+#else				/* regular terminal synonyms */
+    EXTERN char funkey = 0;		/* leading char for function key */
+    EXTERN char funchar[50] =	/* code sent by function key */
+      {
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000
+      };
+    EXTERN char funcmd[50] =	/* equivalent command */
+      {
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000
+      };
+#endif
+#endif
+/* .......................... MODELESS VERSIONS ........................ */
+/*
+	The lexical analyzer and parser has been designed to allow
+	function keys to be easily used for modeless commands.  The
+	best way is to define lexsym using the usual mnemonic forms
+	of commands, and use the function key and synonym tables to
+	define function keys.  First, map function keys to single
+	negative values (or chars with hi bit set (> 127)).  Then,
+	have those values mapped to the real command in the synomym
+	tables.
+*/
+/* ---------------------------- Modeless TVX --------------------------- */
+#ifdef TVX0M_EM
+   /* like tvx, except normal lower case commands map to ^X and normal
+      control commands map to ESC commands */
+    EXTERN char lexsym[LEXVALUES+1] = { '@', 18, 12, 4, 21,
+      'd', 'u', 8, 11, 'i', 'k', '"', '\'', ',', '.', 6, 'f', 16,
+        2, 5, 'b', 22, 15, '/', 's', 'g', 'w', 'y', 'x', ';', '&',
+      'm', ':', '=', 7, 9, '{', 'a', 'p', '?', 'h', 't', 3, 'j', 20,
+      14, 'n', 'o', 'e', 'r', '#', '*','(', ')','~'};
+/*  SYNONYM and function key list */
+
+    EXTERN char loop_beg = '<';
+    EXTERN char loop_end = '>';
+    EXTERN char synofr[20] =	/* from table */
+      {'[',']',0,0,000,000,000,000,000,000,00,00,00,00,00,00,00,00,00,00};
+    EXTERN char synoto[20] =		/* translate to table */
+      {'{','{',0,0,000,0,000,00,00,000,00,00,00,00,00,00,00,00,00,00};
+#ifdef IBMPC
+    EXTERN char funkey = 0;		/* leading char for function key */
+    EXTERN char funchar[50] =	/* code sent by function key */
+      {	 /* make keypad function keys work like you would expect */
+	 71,  72,  73,  75,  77,  79,  83,  80,  81, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+      };
+    EXTERN char funcmd[50] =	/* equivalent command */
+      {
+	  2,  21,  16,  12,  18,  5,   11,   4,  16, 000,
+        000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+      };
+#else				/* regular terminal synonyms */
+    EXTERN char funkey = 0;		/* leading char for function key */
+    EXTERN char funchar[50] =	/* code sent by function key */
+      {
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000
+      };
+    EXTERN char funcmd[50] =	/* equivalent command */
+      {
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000
+      };
+#endif
+#endif
+
+/* ---------------------------- EMAX --------------------------- */
+#ifdef EMAX_EM
+   /* like tvx, except normal lower case commands map to ^X and normal
+      control commands map to ESC commands */
+    EXTERN char lexsym[LEXVALUES+1] =
+      { '%',   1,   2,   3,   4,   5,   6,   7,   8,  11,  12,
+	      14,  15,  16,  18,  19,  22,  24,  25,  26, '!',
+             '#', '>', '<', 'b', 'f', 'v', '?'
+      };
+/*  SYNONYM and function key list */
+
+    EXTERN char loop_beg = '(';		/* <esc>( for emax */
+    EXTERN char loop_end = ')';
+
+    EXTERN char synofr[20] =	/* from table */
+      {127,0202,0203,0204,'s',000,000,000,000,000,00,00,00,00,00,00,00,00,00,00};
+    EXTERN char synoto[20] =		/* translate to table */
+      {  8, '<', 'v', '>', 19,0,000,00,00,000,00,00,00,00,00,00,00,00,00,00};
+#ifdef IBMPC
+    EXTERN char funkey = 0;		/* leading char for function key */
+    EXTERN char funchar[50] =	/* code sent by function key */
+      {	 /* make keypad function keys work like you would expect */
+/*	 hm,  ^,  pgu,  <-,  ->, end, del,  v , pgd, */
+	 71,  72,  73,  75,  77,  79,  83,  80,  81, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+      };
+    EXTERN char funcmd[50] =	/* equivalent command */
+      {
+	0202, 16,0203,   2,   6,0204,   4,  14,  22, 000,
+        000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+      };
+#else				/* regular terminal synonyms */
+    EXTERN char funkey = 0;		/* leading char for function key */
+    EXTERN char funchar[50] =	/* code sent by function key */
+      {
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000
+      };
+    EXTERN char funcmd[50] =	/* equivalent command */
+      {
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000,
+	000, 000, 000, 000, 000, 000, 000, 000, 000, 000
+      };
+#endif
+#endif
+/* ------------------- END OF COMMAND SET VALUES ------------------ */
+
+    EXTERN char user_set[40] = "";		/* user search set */
+    EXTERN char use_wild = TRUE;		/* use wild cards by default */
+    EXTERN char old_cmds[16] = {0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0 };
+    EXTERN int old_cindex = 0;			/* cursor into old_cmds */
+    EXTERN int cut_mode = DEF_CUTMODE;		/* kill line cuts */
+#ifdef NOMODE_LEX
+    EXTERN int escape_chr = 27;			/* ESC is default prefix char */
+#else
+    EXTERN int escape_chr = 0;			/* ESC is default prefix char */
+#endif
+
+
+#ifdef MSDOS
+    EXTERN char cfgname[40] = "-c=\\bin\\config.tvx";
+#endif
+#ifdef GEMDOS
+    EXTERN char cfgname[40] = "-c=config.tvx";
+#endif
+#ifdef UNIX
+    EXTERN char cfgname[40] = "-c=config.tvx";
+#endif
+#ifdef OSCPM
+    EXTERN char cfgname[40] = "-c=a:config.tvx";
+#endif
+    EXTERN int endpatch = 0;	/* to get address of end of patch area */
+
+#else
+    EXTERN char begpatch[6];
+
+    EXTERN char lexsym[LEXVALUES+1];
+    EXTERN char loop_beg, loop_end;
+
+    EXTERN char synofr[20],	/* from table */
+	synoto[20];		/* translate to table */
+
+    EXTERN char funkey,		/* leading char for function key */
+	funchar[50],	/* code sent by function key */
+	funcmd[50];	/* equivalent command */
+    EXTERN int addx,		/* amount to add to get x */
+	addy;			/* to get y */
+    EXTERN char cxychr;		/* true if convert xy bin to ascii */
+    EXTERN char cversn[12],	/* a version to identify config */
+	cxy1st,			/* l if line first, c if column 1st */
+	cxybeg[8],		/* start xy control seq */
+	cxymid[8],		/* middle xy control seq */
+	cxyend[8],		/* end sequence */
+	cerrbg[8],		/* string to print when errors start */
+	cerred[8],		/* when errors done */
+	ctopb[8],		/* top blanks = reverse linefeed */
+	cinit[20],		/* start up sequence */
+	cendit[20],		/* to end session */
+	cbotb[8],		/* bottom sequence */
+	celin[8],		/* erase to end of line */
+	cescr[8],		/* erase to end of screen */
+	cclears[8],		/* clear and home */
+	cdelchr[8],		/* delete character */
+	ccsrcm[8],		/* set cursor to command mode */
+	ccsrin[8],		/* set cursor to insert mode */
+	ciline[8],		/* insert a line */
+	ckline[8],		/* kill a line */
+	cundlb[8],		/* turn on underline */
+	cundle[8],		/* turn off underline */
+	cboldb[8],		/* start bold */
+	cbolde[8];		/* end bold */
+
+    EXTERN int dsp_mem,ddline,dscrl,dxcase,usecz,autoin,logdef;
+    EXTERN char delkey;
+
+    EXTERN int	tvlins,	/* number of lines on screen */
+		tvcols,	/* number of columns on screen */
+		tvhardlines,	/* real number of lines (for small window) */
+		tvx,	/* current x cursor position */
+		tvy,	/* current y cursor position */
+		tvdlin,	/* the "active" display line */
+		dsplin,	/* the default display line */
+		tabspc,	/* spacing for tabs */
+		leftmg,	/* left margin of display */
+		wraplm,	/* auto wrap? */
+		isibmpc; /* for possible use with a general version */
+
+    EXTERN char user_set[40],			/* wild matches */
+	use_wild;
+
+    EXTERN char old_cmds[16];
+    EXTERN int old_cindex;			/* cursor into old_cmds */
+    EXTERN int cut_mode;			/* kill line cuts */
+    EXTERN int escape_chr;			/* prefix char */
+
+    EXTERN char cfgname[40];
+
+    EXTERN int endpatch;	/* to get address of end of patch area */
+#endif
+
+
+    EXTERN int	bakpos,		/* used when building log file */
+		bakflg,		/* if writing to log file */
+		usebak,		/* if want to build a log file or not */
+		makebackup;	/* if want to retain backup .bak file */
+
+    EXTERN BUFFINDEX nxtsav,	/* top of save buffer */
+		curchr,		/* pointer to current character */
+		nxtchr,		/* ptr to buff of next new chr */
+		mxbuff,		/* maximum number of chars in buff */
+		*lines;		/* line ptrs */
+
+    EXTERN int 	curlin,		/* pointer to current line */
+		nxtlin,		/* ptr to lines of next new line */
+		mxline;		/* maximum number of lines */
+
+    EXTERN char *buff;		/* character and save buffer */
+
+#ifdef NOALLOC
+    EXTERN int myline[MAXLINE+1];	/* the real line buffer */
+    EXTERN char mybuff[MAXBUFF+1];	/* the real buffer */
+#endif
+
+    EXTERN int	oldlen,		/* length for '=' command */
+		savlin,		/* number of saved lines */
+		savlen;		/* line lenght of save buffer for rmvlst */
+
+    EXTERN int	oldlex,		/* last commands lexical value */
+		oldcol,		/* beginning column for dwncol */
+		echof,		/* whether or not to echo action */
+		xcases,		/* exact case flag */
+		scroll;		/* scroll window */
+
+    EXTERN int newfil;		/* YES if creating a new file */
+    EXTERN int rdonly;		/* YES if reading a file only */
+
+    EXTERN char orig_file[FNAMESIZE+1],	/* original file */
+		source_file[FNAMESIZE+1], /* where file really is */
+		work_file[FNAMESIZE+1],	/* current working output file */
+		dest_file[FNAMESIZE+1];	/* ultimate name for file */
+
+    EXTERN int	rptuse,		    /* which repeat buffer currently active */
+		rptcnt[REPEATBUFS],	/* number of repeats left to do */
+		nxtrpt[REPEATBUFS];	/* pointer to next repeat character */
+
+    EXTERN char rptbuf[REPEATBUFS][102]; /* up to 100 chars in repeat loop */
+    EXTERN char sbuff[102];		/* search buffer */
+    EXTERN char pat_buff[102];		/* save the pattern */
+
+/* other globals */
+#ifndef USEEXTERN
+    int slastl = 0;
+#else
+    extern int slastl;
+#endif
+
+    EXTERN char unkbuf[130];
+
+    EXTERN int useprint;	/* whether to print */
+    EXTERN int xoutcm;		/* used for 240 col virtual screen */
+    EXTERN int last_col_out;	/* last column output */
+    EXTERN int waserr;
+    EXTERN int blimit;		/* limit for read in buffer */
+    EXTERN int ttymode;		/* true if in tty mode */
+    EXTERN int ttynext;		/* cursor to next char from rdtty */
+    EXTERN int ins_mode;	/* true if insert mode */
+    EXTERN int force_tty;	/* for unix to force tty mode */
+
+
+    EXTERN FILE *infile, *outfile, *bkuin, *bkuout;
+    EXTERN int ineof;
+
+/* ---------------------------- GLOBALS ------------------------------- */

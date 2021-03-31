@@ -1,0 +1,432 @@
+/*
+  TVX - A full screen editor written in C
+
+   This version of TVX Copyright (c) 1986 by Bruce E. Wampler
+
+   Permission is hereby granted for free, unrestricted nonprofit
+   use of this software.  Please feel free to modify, distribute,
+   and share this software as long as you aren't making any money
+   from it.  If you want to use this code in a profit making environment,
+   please contact the author for permission.
+
+  Revison summary:  (edit ALL cases of VERSION when change)
+      Version
+	1/10/    - this code first released to USENET
+	1/29/86  - memory code fixed, changes contained in first fix notice
+	1/30/86  - fixed insert mode msg problem in unkill
+	2/6/86   - cleaned up atari stdio.h problem, bug with noteloc
+	2/11/86  - added required code for Unix System V
+	2/14/86  - GETSIO option, allows fgets I/O if faster than fgetc
+	2/17/86  - bug in multi-line repeat loop, bug in addfil: ALMOSTOUT
+	2/22/86  - vi emulation + modeless version for emacs and tvx0
+	2/25/86  - added SCR_BUF stuff from decvax!gancarz (Mike Gancarz)
+	3/6/86  - added hires screen for atari st [released to mod.sources]
+
+*********************************************************************  */
+
+
+/* ======================================================================== */
+/* Define the editor being emulated: (possibly by -D switch to cc)
+
+	TVX_EM - The original tvx (this really IS tvx)
+	VI_EM  - emulates vi
+	EMAX_EM - emulates emacs
+	TVX0M_EM - a tvx flavored modeless editor
+*/
+
+/* #define TVX_EM */
+/* #define VI_EM */		/* vi emulation */
+/* #define TVX0M_EM */		/* modeless emulation */
+/* #define EMAX_EM */
+
+/* ======================================================================== */
+/* ====> Select terminal version: #define at most ONE of <================= */
+/*       the following symbols debending the terminal used. (except SUN)    */
+
+#undef IBMPC
+#undef ATARI520
+/* #define VT100 */
+#undef HP2621
+#define TERMCAP 			/* Unix TERMCAP version */
+/* #define SUN */		/* define for SUN in addition to TERMCAP */
+
+
+/* ======================================================================== */
+/* ==================> Select ONE operating system  <====================== */
+
+/* #define OSCPM */		/* CP/M-80 */
+#undef MSDOS			/* 8086 MS-DOS */
+#undef GEMDOS			/* atari 520 gemdos */
+
+/* NOTE:  If you define UNIX, please look at the beginning of tvx_unix.c
+   for additional Unix related options */
+#define UNIX 		/* unix is a bit different! */
+
+/* !!!! following defines used in ADDITION to UNIX if used !!!! */
+/* #define SYSV */	/* define this in ADDITION to UNIX for System V */
+/* #define ULTRIX11 */	/* for DEC PDP-11 Ultrix */
+/* #define PRO350 */	/* DEC PRO-350 system */
+
+#define SCR_BUF		/* buffered screen update much faster on Unix */
+	/* not implemented for other systems yet, but should be easy */
+#define S_BUFSIZE 2048	/* size of screen buffer */
+
+/* ======================================================================== */
+
+/* the include for stdio.h is here after os has been defined */
+
+#ifdef GEMDOS
+/* GEMDOS requires that the brain damaged stdio.h provided with the
+   developer's kit be replaced to get rid of conflicts with the
+   portab.h file - ugly.  A special file called stdiotvx.h is provided
+   with the atari distribution */
+
+#include "stdiotvx.h"
+
+#else
+#include <stdio.h>
+#endif
+
+/* ========> select other options by defining appropriate symbols <======== */
+
+#define VB /**/		/* whether or not to create backup log version */
+
+#undef ULBD		/* supports underline, bold in ^U, ^B format */
+
+#define NEED_MISC_DEFS /**/
+/* ======================================================================== */
+#ifdef NEED_MISC_DEFS
+/* following definitons are usually not defined in most stdio.h's */
+
+#define NIL (-1)		/* nil ptr for lists */
+#define TRUE 1
+#define FALSE 0
+
+/* following might not be defined in some C's stdio.h, but usually are */
+
+/* #define EOF (-1) */	/* standard end of file */
+/* #define EOS '\0' */	/* standard end of string */
+#endif
+
+/* ********************************************************************** */
+/* ********************************************************************** */
+
+/*  Other options now selected automatically depending on above #defines  */
+
+/* ********************************************************************** */
+/* ********************************************************************** */
+
+/* ----------------- Emulator Version ----------------------------------- */
+
+#ifdef TVX_EM
+#define TVX_CMDSET			/* command set used by tvx */
+#define START_IDM "TVX - Full Screen Editor"
+#define START_HELPM "Press ? for help after starting"
+#define VERSION " - TVX (3/6/86) - " 
+#define DEF_CUTMODE 0
+#endif
+
+#ifdef VI_EM
+#define START_IDM "TVX - Editor emulating vi"
+#define VERSION " - VIX (3/6/86) - " 
+#define START_HELPM "Press = for help after starting"
+#define DEF_CUTMODE 1
+
+#undef VI_MODS		
+/* VI_MODS defines some "extensions" or enhancements to vi that
+   the local users prefer to the way vi does things.  Specifically:
+   1) j and k become line oriented rather than column oriented. ^P behaves
+   in the usual up column, and ^N work like the usual down arrow.
+   2) r is changed to advance the cursor after the changed char.
+*/
+#endif
+
+#ifdef EMAX_EM
+#define NOMODE_LEX
+#define START_IDM "EMAX - TVX/EMAX Full Screen Editor"
+#define START_HELPM "Press <ESC>? for help after starting"
+#define VERSION " - EMAX (3/6/86) - " 
+#define DEF_CUTMODE 1
+#endif
+
+#ifdef TVX0M_EM
+#define TVX_CMDSET
+#define NOMODE_LEX
+#define START_IDM "Modeless TVX - Full Screen Editor"
+#define START_HELPM "Press <ESC>? for help after starting"
+#define VERSION " - TVX/0 (3/6/86) - " 
+#define DEF_CUTMODE 0
+#endif
+
+/* ---------------- Operating System dependent defintions --------------- */
+
+/* important note: max value for REPEATBUFS is 9! 			  */
+
+/* ---------------------------------------------------------------------- */
+#ifdef OSCPM			/* uses Software Toolworks C/80 */
+#define BACKUPNAME "BACKUP.LOG"	/* backup log file name */
+#define BUFFLIMIT 2500		/* how much empty space to save in buffer */
+#define FILEREAD "rb"		/* read a file in binary */
+#define FILEWRITE "wb"		/* write a binary file */
+#define FNAMESIZE 14		/* size of file names */
+#define INT16 /**/		/* ints are 16 bits */
+#define LINELIMIT 75		/* number of spare lines to save */
+#define MAKE_BACKUP 1		/* 1 (true), want to make .bak file by default */
+#define MAXBUFF 40000		/* maximum number of total characters */
+#define MAXLINE 1150		/* maximum number of lines (abt. MAXBUFF/30) */
+#define REPEATBUFS 3		/* number of repeat buffers allowed */
+#define USELF /**/		/* using line feed on video */
+#define FILELF /**/			/* also in files */
+#define NEWLINE 13		/* 1st line separator: CR */
+#define USECTRLZ /**/
+#define NEEDTVLIB /**/		/* need standard c lib routines */
+#define BUFFINDEX unsigned int
+#define FAST static
+#define SLOW static
+#endif
+
+/* ---------------------------------------------------------------------- */
+#ifdef MSDOS
+#define HELP /**/		/* help available */
+#define FULLHELP /**/		/* all of it */
+#ifdef TVX_EM
+#define CONFIGFILE /**/		/* allow -c switch */
+#endif
+#define BACKUPNAME "BACKUP.LOG"	/* backup log file name */
+#define BUFFLIMIT 3000		/* how much empty space to save in buffer */
+#define FILEREAD "rb"		/* read a file in binary */
+#define FILEWRITE "wb"		/* write a binary file */
+#define FNAMESIZE 70		/* size of file names, allows paths */
+#undef GETSIO			/* fgets slower than fgetc for cii-86 */
+#define INT16 /**/		/* ints are 16 bits */
+#define LINELIMIT 75		/* number of spare lines to save */
+#define MAKE_BACKUP 1		/* 1 (true), want to make .bak file by default */
+#define MAXBUFF 60000		/* maximum number of total characters */
+#define MAXLINE 3500		/* maximum number of lines (abt. MAXBUFF/30) */
+#define REPEATBUFS 5		/* number of repeat buffers allowed */
+#define USELF /**/		/* using line feed */
+#define FILELF	/**/		/* also in files */
+#define NEWLINE 13		/* 1st line separator: CR */
+#define BUFFINDEX unsigned int
+/* #define USECTRLZ */		/* default value for ^Z */
+#define FAST static
+#define SLOW static
+#endif
+/* ---------------------------------------------------------------------- */
+/* ---------------------------------------------------------------------- */
+#ifdef GEMDOS
+#define HELP /**/		/* help available */
+#define FULLHELP /**/		/* all of it */
+#ifdef TVX_EM
+#define CONFIGFILE /**/		/* allow -c switch */
+#endif
+#define BACKUPNAME "BACKUP.LOG"	/* backup log file name */
+#define BUFFLIMIT 3000		/* how much empty space to save in buffer */
+#define FILEREAD "r"		/* read a file in binary */
+#define FILEWRITE "w"		/* write a binary file */
+#define fopen fopenb
+#define FNAMESIZE 70		/* size of file names, allows paths */
+#define GETSIO			/* use fgets for main file I/O */
+#define INT16 /**/		/* ints are 16 bits */
+#define LINELIMIT 75		/* number of spare lines to save */
+#define MAKE_BACKUP 1		/* 1 (true), want to make .bak file by default */
+#define MAXBUFF 60000		/* maximum number of total characters */
+#define MAXLINE 3500		/* maximum number of lines (abt. MAXBUFF/30) */
+#define REPEATBUFS 5		/* number of repeat buffers allowed */
+#define USELF /**/		/* using line feed */
+#define FILELF /**/		/* also in files */
+#define NEWLINE 13		/* 1st line separator: CR */
+#define USECTRLZ /**/
+#define BUFFINDEX long
+#define FAST register
+#define SLOW static
+#endif
+/* ---------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------------- */
+#ifdef UNIX
+#define getchr fgetc
+#define FLOWCONTROL /**/	/* define this if you want ^S/^Q enabled */
+#undef COMMA_BAK		/* #define if you want ".," backup files */
+
+#define NO_EXTEND_CHAR		/* only allow 127 displayable chars */
+
+#define HELP /**/		/* help available */
+#define FULLHELP /**/		/* all of it */
+#ifdef TVX_EM
+#define CONFIGFILE /**/		/* allow -c switch */
+#endif
+#define BACKUPNAME "BACKUP.LOG"	/* backup log file name */
+#define BUFFLIMIT 4000		/* how much empty space to save in buffer */
+#define FILEREAD "r"		/* read a file in binary */
+#define FILEWRITE "w"		/* write a binary file */
+#define FNAMESIZE 80		/* size of file names, allows paths */
+#define GETSIO			/* use fgets for main file I/O */
+#define LINELIMIT 100		/* number of spare lines to save */
+#define MAKE_BACKUP 1		/* 1 (true), want to make .B file by default */
+		/* change to 0 if don't want, which is like other Unix eds */
+#define MAXBUFF 120000		/* maximum number of total characters */
+#define MAXLINE 5000		/* maximum number of lines (abt. MAXBUFF/30) */
+#define NEWLINE 10
+#define REPEATBUFS 9		/* number of repeat buffers allowed */
+#define USELF /**/		/* using line feed on screen */
+#define BUFFINDEX unsigned int
+#define FAST register
+#define SLOW 			/* dynamics */
+#endif
+
+/* ---------------------------------------------------------------------- */
+
+#ifdef ULTRIX11
+#undef MAXBUFF
+#undef MAXLINE
+#define MAXBUFF 40000		/* maximum number of total characters */
+#define MAXLINE 1150		/* maximum number of lines (abt. MAXBUFF/30) */
+#endif
+
+/* ---------------------------------------------------------------------- */
+/* ---------------------- Misc defintions ------------------------------- */
+
+#define ARB 100
+#define ALMOSTOUT 300   /* garbage collect when ALMOSTOUT characters left */
+#define BACKSPACE 8
+#define BELL 7       /* bell */
+#define CR 13 
+#define ESC 27 
+#define ENDFILE 26
+#define LF 10 
+#define NO 0
+#define TOGUNDERLINE 21 	/* ^U for underline */
+#define TOGBOLD 2 		/* ^B for bold */
+#define TAB 9
+#define YES 1
+/* these look like they can be changed, but beware, especially
+   with positive values (you can't change ENDLINE to LF, for example) */
+#define BEGLINE (char)(0xff)
+#define ENDLINE 0  		/* marks end of a line */
+#define GARBAGE (char)(0xfe)  /* filler character for gbgcol */
+
+#define E0 0			/* element 0 of arrays (skipped) */
+
+/* ---------------------- Wild card values ----------------------------------- */
+#define W_letter 12		/* ^L is letter */
+#define W_digit 4		/* ^D is digit */
+#define W_alpha 1		/* ^A is alpha num */
+#define W_punc 16		/* ^P is punctuation */
+#define W_anything 24		/* ^X is any character */
+#define W_others 15		/* ^O is non-alpha */
+#define W_user 21		/* ^U is user set */
+#define W_span 23		/* ^W is "word" of */
+#define W_skip 14		/* ^N is not in word of*/
+/* -------------------- Command Definitions ----------------------------- */
+
+#ifdef TVX_CMDSET		/* both 2 mode and modeless tvx use the same */
+#define VRIGHT 1		/* lex val right, or foward one character */
+#define VLEFT 2 		/* left or backwards one character */
+#define VDOWNLINE 3		/* down line, to beg. of next line */
+#define VUPLINE 4		/* up line, to beg. of prev. line */
+#define VDOWNCOL 5		/* down in column ^D */
+#define VUPCOL 6		/* up in column ^U */
+#define VDELLAST 7		/* delete previous character */
+#define VDELNEXT 8		/* delete forward */
+#define VINSERT 9		/* insert text */
+#define VKILLALL 10		/* kill entire current line */
+#define VKILLREST 11		/* kill rest of current line */
+#define VKILLPREV 12		/* kill previous part of line */
+#define VBEGLINE 13		/* beginning of current line */
+#define VENDLINE 14		/* back of current line */
+#define VSEARCH 15		/* find a string */
+#define VNEXT 16		/* next - search across pages */
+#define VFLIP 17		/* page a screen full */
+#define VTOP 18			/* top of buffer */
+#define VBOTTOM 19		/* bottom of buffer */
+#define VFBEGIN 20		/* beginning of file */
+#define VVERIFY 21		/* verify: rewrite screen or show dot */
+#define VOPENLINE 22		/* open a new line */
+#define VREMOVE 23		/* remove last thing maniuplated */
+#define VSAVE 24		/* put text in save buffer */
+#define VGET 25			/* get or restore save buffer */
+#define VWPAGE 26		/* write current page, fetch next page */
+#define VYANK 27		/* "save" from external file */
+#define VQUIT 28		/* quit */
+#define VSAGAIN 29		/* search for the thing again */
+#define VXREPEAT 30		/* execute repeat buffer */
+#define VMEMORY 31		/* print remaining buffer space */
+#define VSETPARS 32		/* set parameters */
+#define VRMVINS 33		/* remove last, enter insert mode */
+#define VUNKILL 34		/* unkill last line killed */
+#define VMVWORD 35		/* move over a word at a time */
+#define VMVBWORD 36		/* move over words backwards */
+#define VSAPPEND 37		/* append to save buffer */
+#define VPRINTS 38		/* print screen */
+#define VHELP 39		/* show contents of repeat buffer */
+#define VHALFP 40		/* half a page down */
+#define VABORT 41		/* abort */
+#define VCHANGE 42		/* change n chars */
+#define VJUMP 43		/* jump back to prev loc */
+#define VTIDY 44		/* tidy - justify */
+#define VNOTELOC 45		/* note current location */
+#define VRETNOTE 46		/* ^N  - Return to noted loc */
+#define VSYSTEM 47		/* call operating system */
+#define VEDITRPT 48		/* edit repeat buffer n */
+#define VSTORERPT 49		/* store in repeat buffer n */
+#define VEXECRPT 50		/* execute repeat buffer k n time */
+#define VINSPAT 51		/* insert search pattern */
+#define VUSER1 52		/* spare 1 */
+#define VUSER2 53		/* spare 2 */
+#define VFOLDCASE 54		/* fold case */
+#define LEXVALUES 54		/* total number of lexical values */
+#endif
+
+#ifdef VI_EM			/* needed vi_em lexical values */
+#define VMEMORY 4
+#define VHELP 7
+#define VSEARCH 12
+#define VRSEARCH 15
+#define VDOWNCOL 23
+#define VUPCOL 24
+#define VSAPPEND 32
+#define VENDZ 33
+#define VMVBWORD 36
+#define VRSAGAIN 27
+#define VPUT 29
+#define VTVX 30
+#define VSAPPEND 32
+#define VENDZ 33
+#define VMVBWORD 36
+#define VINSERT 40
+#define VNOTELOC 44
+#define VSAGAIN 45
+#define VGET 47
+#define VMVWORD 51
+#define VSAVE 53
+#define VNOOP 50
+
+#define LEXVALUES 54		/* total number of lexical values */
+#endif
+
+#ifdef EMAX_EM
+#define VSAVE 100
+#define VSAPPEND 101
+#define VNEXT 102
+#define VSAGAIN 103
+#define VTVX 3
+#define VNOOP 7
+#define VDOWNCOL 11
+#define VUPCOL 13
+#define VOPENLINE 12
+#define VRSEARCH 14
+#define VSEARCH 15
+#define VGET 18
+#define VEXTEND 17
+#define VQUIT 19
+#define VMVBWORD 24
+#define VMVWORD 25
+#define VHELP 27
+
+#define LEXVALUES 27
+#endif
+
+#define UNKNOWN (-5)		/* unknown lexical value */
+
+/* ********************************************************************* */

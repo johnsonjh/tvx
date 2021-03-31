@@ -1,0 +1,1386 @@
+
+
+
+
+
+                         TVX Reference Manual
+ 
+ 
+ 
+     This is the Reference Manual for TVX, a full screen
+editor written in C by Dr. Bruce E. Wampler.  (Current address: Dr.
+Bruce E. Wampler, University of New Mexico, Department of Computer
+Science, Farris Engineering Center, Albuquerque, NM 87131; uucp:
+...{ucbvax | gatech | ihnp4!lanl}!unmvax!wampler).  Any comments, bug
+reports, or suggestions should be sent to that address.  The name TVX
+is derived from "TV" editor for any terminal ("X"). 
+ 
+     The current release of TVX has several different versions:
+ 
+1) Standard TVX - The original version and command set of TVX. 
+2) VIX - A version of TVX that emulates the Unix vi editor. 
+3) TVX0 - A modeless version of TVX. 
+4) EMAX - A version of TVX that emulates the EMACS editor. 
+ 
+     The main part of this manual is written describing "Standard
+TVX," the version used by the author.  The VIX, TVX0, and EMAX
+versions are described in appendices.  While the emulator versions of
+TVX are close command set compatible versions of the original editors,
+the you should be aware that certain fundamental properties of the
+underlying TVX editor remain, and that the emulators will not work
+exactly like the originals.  If you intend to use one of the other
+versions of TVX, you should read this part of the manual up to the
+section describing standard TVX commands first. 
+ 
+ 
+*** General Comments ***
+ 
+     Standard TVX functions almost identically for all versions,
+including the command set.  The emulation versions of TVX have been
+written to be command set compatible with the original versions of the
+editors.  It is also possible to construct a completely new version of
+TVX with a custom command set.  Control codes on are normally entered
+by pressing the CTRL key and the letter key at the same time.  On most
+versions, the character delete key is BACKSPACE.  This character
+delete key is the one normally used by the respective operating
+system.  It is up to the local implementation to notify the user of
+any variance from these conventions. 
+ 
+     Once the file has been read in, the screen will be cleared, and
+the first screenful of the file printed on the screen and the cursor
+positioned over the first character of the file.  If a new file is
+being created, the message "buffer empty" will be displayed, and the
+cursor positioned in the upper left corner.  TVX is then ready to
+accept commands from the keyboard.  TVX works on the principle that
+what you see is what you get.  Most commands also take an optional
+numeric count.  The default count is always one.  Commands that allow
+a count value are preceded by the letter 'n' in the following
+descriptions.  Whenever a command produces output or an error message,
+it appears on the bottom line of the screen. 
+ 
+     The BACKSPACE key (Control-H on some terminals) is used to edit
+ 
+ 
+                                 -1-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+input text.  When TVX is accepting commands, BACKSPACE will cause the
+character immediately before the cursor to be deleted. 
+ 
+     TVX (all versions!) works entirely in the available memory for
+editing.  The text from the file which is being edited is held in a
+buffer in main memory.  If a file is particularly large, it may not
+entirely fit into main memory.  The MS-DOS versions, for example, will
+allow about 50K characters, depending on the memory available.  Unix
+versions will usually allow 120,000 characters and 5000 lines in one
+buffer.  If the entire file will not fit into the buffer at once, then
+only part of it is read in at a time.  The buffer size limit in no way
+restricts the total size of a file that can be edited by TVX.  To make
+editing large files easier, some commands apply to the entire file and
+cause automatic cross buffer manipulation. 
+ 
+     Because of the internal organization of the text within the
+buffer, TVX may occasionally "compact" the tiny fragments of unused
+buffer space generated as a part of normal editing.  When this
+happens, a message is displayed, and input keystrokes are remembered
+but not echoed until the compaction process is complete.  The process
+may take several seconds. 
+ 
+     TVX actually divides the internal memory into two parts: the text
+buffer and the save buffer.  The text buffer (or simply the buffer) is
+used to hold the file (or part of the file) being edited.  There is
+only one such text buffer (unlike some other editors such as emacs).
+The save buffer is used for moving text, both from one part of the
+text buffer to the other, as well as to and from external files.  The
+maximum size of the save buffer depends on the amount of text
+currently residing in the main text buffer.  The following diagram
+shows the internal TVX memory organization:
+ 
+   +-----------------------------+
+   |  TEXT BUFFER - the current  |
+   |  text (or portion) of file  |
+   |  being edited. (grows down) |
+   |            _________________|
+   |___________|                 |
+   |  free memory        ________|
+   |_____________________|       |
+   |  SAVE BUFFER - grows up     |
+   +-----------------------------+
+ 
+     Text is added to the text buffer when the file is first read in
+(or created).  If the file doesn't fit into one buffer, you will have
+to manually "page" the text into the buffer.  Text is added to the
+save buffer in one of several ways.  TVX (and emulators) have commands
+to move text from the text buffer to the save buffer, and move the
+contents of the save buffer to the text buffer.  TVX also has "cut
+mode".  When cut mode is enabled, when lines are killed, they are
+automatically copied into the save buffer as well as being deleted
+from the text buffer.  Cut mode is normally off for TVX, but is on for
+VIX and EMAX.  It is also possible to save the contents of the save
+buffer to a new external file, and to load the save buffer from an
+external file.  All versions of TVX use this scheme for handling
+text. 
+ 
+ 
+                                 -2-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+     End of lines are not special to TVX.  Thus all the cursor
+movement commands and delete single character commands will treat the
+end of line as just another character.  This also means that a
+<Return> (end of line) is a valid search character, and thus makes it
+impossible to end a find pattern with a <Return>.  The <Escape> key is
+used to mark the end of a find pattern.  All the Standard TVX wild
+cards may be used for all versions of TVX. 
+ 
+     Another basic concept of TVX is the "last thing." Whenever TVX
+finds a pattern from the search command, skips over a word, or gets
+from or puts to the save buffer, that text is considered the "last
+thing." All versions of TVX will have a command that can delete the
+last thing.  While this is this a powerful editing concept, it does
+have some consequences.  First, the cursor will always be placed AFTER
+the pattern just found.  It also means that TVX has no delete word
+commands.  Instead, the delete last thing command is used after
+skipping over a word.  Using the delete last thing also makes it very
+easy to save text into the save buffer, and then deleting it after the
+desired number of lines have been saved. 
+ 
+     Probably the most powerful editing tool provided by TVX is the
+repeat loop.  This allows arbitrary command sequences to be entered,
+and repeated any number of times.  All versions of TVX will have at
+least 5 different repeat buffers.  All emulation versions of TVX use
+the basic TVX repeat loop instead of emulating whatever macro facility
+might be provided by the orignal editor.  (The commands inside the
+repeat loop are the emulated commands, not standard TVX commands.)
+ 
+     Many of the basic operating characteristics of TVX are
+controllable by user settable parameters.  These parameters are
+relevant to all versions of TVX, with the current status of each
+displayed on the help screen.  These parameters are summarized in the
+'set parameter' command (':') in the Standard TVX Commands section,
+but a brief overview of the paramaters will also cover some of the
+capabilities of TVX (and the emulator versions). 
+ 
+     While the normal screen is only 80 columns wide, TVX has been
+written to support a "virtual" screen width of 240 columns.  As you
+move the cursor right on a line that is longer than 80 columns, the
+screen will automatically scroll to the left in increments of 16
+columns.  You can also control how many lines of the screen TVX uses
+using the 'v' parameter.  Normally, TVX will use the entire screen.
+If you are working over phone lines, you can tell TVX to use only 5 or
+7 lines, thus making updating much faster. 
+ 
+     TVX has some limited word processing cabability.  This is the
+autowrap feature, settable both when you first run TVX, and by the 'w'
+parameter.  Setting autowrap to column 65, for example, will tell TVX
+to automatically insert a newline whenever you enter text past that
+column.  The 'tidy' command will use the autowrap margin to 'fill' the
+text after the fact.  This feature makes it easy to make your text
+more readable, and even create good looking short memos without
+needing to resort to nroff or troff. 
+ 
+     For programmers, TVX has an autowrap command.  The 'a' parameter
+controls this feature.  When enabled, TVX will automatically match the
+ 
+ 
+                                 -3-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+leading white space at the beginning of the previous line. 
+ 
+     The search command also has some advanced features.  By default,
+searches are case insensitive, but the 'f' parameter controls this.
+TVX also supports a set of "wild cards".  You can specify a set of
+letters, numbers, alphanumerics, punctuation, or other characters as
+part of the wild cards.  The 'u' parameter also allows you to define
+your own set of wild card characters.  TVX remembers the last pattern
+found (the actual pattern, not just the wild cards), and has a command
+to insert that pattern into the text.  Thus, with repeat loops, wild
+cards, and the insert found pattern command, it is possible to do
+quite creative editing functions.  The 'm' parameter controls the use
+of wild card matching, so it can be disabled if you need to match one
+of the wild card characters. 
+ 
+     Finally, TVX has parameters to control just how the screen is
+scrolled.  The home display line controlled by the 'd' parameter tells
+TVX which line to put the cursor on when the screen has been
+'verified'.  The 's' scroll window controls how many lines the cursor
+will move up and down from the home line before scrolling the text.
+If the scroll window is 0, then the cursor will be fixed on the home
+display line.  By setting it to another value, you can control how
+much context remains before scrolling.  These settings are very much
+personal taste. 
+ 
+     TVX uses two techniques for protecting the original file from
+editing mistakes.  First, each time a file is edited, a new version is
+created, and the previous version retained in its original form as a
+backup.  This file will change the original file extension to '.BAK'
+on MS-DOS systems, and '.B' on Unix.  A more complete description of
+TVX file handling is included in an appendix.  Also, as you edit your
+file, TVX has the capability to write all commands entered during the
+session to a log file when that capability is enabled.  In the event
+of a major editing mistake, it is possible to edit that log file to
+remove the command errors, and then apply that "command" file to the
+previous version of the edited file to get back to the state right
+before the mistake.  This feature also allows files of TVX commands to
+be defined by the user and executed in one step.  The last section of
+the Reference Manual explains how to use the command file feature. 
+ 
+ 
+ 
+*** RUNNING THE EDITOR ***
+ 
+     To edit a file using TVX, enter the following command line:
+
+          tvx filename -switch1 -switch2 ...
+ 
+     (VIX, EMAX, and TVX0 use the SAME command line format and
+switches.) The file name specified is the file to be edited, and must
+obey the conventions used by the local operating system (the MS-DOS
+version requires DOS version 2.0, and supports pathnames).  If the
+file is a new file (does not exist), TVX will ask if you really want
+to create it.  Answer y or n. If you gave an incorrect name, you may
+give the correct name, but the switches entered on the original start
+line will remain in effect.  Control-C can be used at this point to
+ 
+ 
+                                 -4-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+abort. 
+ 
+     TVX has several switches which control certain operating
+characteristics.  Each switch begins with a minus (-), and is
+separated from the file name and other switches by a blank in the
+standard UNIX/C convention.  Some switches may be negated by using a
+'nox' form.  Thus, '-b' will cause a .bak file to be generated, while
+a '-nob' causes the .bak file to be deleted on exit from the editor.
+This capability is indicated by []'s.  As many switches as necessary
+or desired can be used at one time in any order.  A ':' may be used
+instead of a '=' for '-c' and '-o'.  The various switches supported
+include:
+ 
+     -c=filename -- read a configuration file.  If only -c is
+          specified, TVX will look for file called /bin/CONFIG.TVX on
+          MS-DOS, for example.  The -c switch is not supported on all
+          implementations. 
+     -[no]b -- generate a .B[AK] version of the original (the usual
+          default).  The -nob option means no .BAK file is generated.
+          This latter mode of operation follows the normal Unix
+          convention of not keeping past generations of a file. 
+     -[no]i -- auto indent mode enabled. 
+     -[no]l -- generate BACKUP.LOG file
+     -o=filename -- send edited output to filename.  The output file
+          can also be changed at any time during the editing session
+          with the ':o' command. 
+     -r -- read only - file can be read in only
+     -s -- big save buffer - leaves more buffer for save file
+     -t -- tty mode - puts TVX into tty mode, not using the screen.
+          See the special appendix on tty mode.  (This is supported
+          only by two mode versions of TVX.)
+     -w -- word processing mode - sets autowrap on, margin to 65. 
+     -z -- -z means use Control-Z to mark end of file, -noz means
+          don't use.  This switch is used only on MS-DOS
+          implementations. 
+     -# -- entering a number from 3 up to the number of lines on the
+          screen will create a smaller TVX editing window.  This is
+          most useful for slower baud rates.  A -7 makes a nice, small
+          window showing 7 lines. 
+ 
+     TVX is mostly a programmer's editor, and can can edit any
+standard text line file.  On Unix systems, it is an alternative to
+standard editors such as ed or vi. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+                                 -5-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+               *** Summary of Standard TVX Commands ***
+ 
+ 
+ 
+     A key to success when using TVX is to remember that there are two
+modes of operation.  The normal mode is command mode.  In this mode,
+all keystrokes are interpreted as commands.  When you want to enter
+text, you must enter insert mode with the 'I' command.  While in
+insert mode, all keystrokes entered will be inserted into the file and
+displayed on the screen.  You must exit from insert mode with the
+escape key.  When you enter insert mode, the message "### Insert Mode
+###" will be displayed on the last line of the display.  Also, on many
+terminals, TVX will change the cursor shape between command and insert
+mode. 
+ 
+     The modeless version of TVX (TVX0) uses the same mnemonics as
+Standard TVX for the most part.  There is a 1:1 mapping between the
+commands.  The modeless names for each command is included in each
+description of Standard TVX commands.  Counts for any modeless TVX
+command can be entered after the escape.  Thus, "<Esc>10K" will kill
+ten lines, while <Esc>10^K" will kill 10 characters. 
+ 
+     Notes: An n preceding a command means optional numeric
+     argument may be supplied.  If omitted n will default to 1,
+     and n can be zero or negative if appropriate.  '$'
+     represents the escape key, and is used as a terminator for
+     insert, find, and loops.  Control commands are indicated
+     with '^'.  For example, '^K' represents Control-K, and is
+     usually entered by simultaneously holding down the CTRL key
+     and the K key. 
+ 
+ 
+nA - Append to Save Buffer
+ 
+     The 'A' command is used to append lines of text to the end of the
+save buffer, even if other commands have been used since the last 'A'
+or 'S' command.  The append command works exactly like the 'S' command
+otherwise. 
+ 
+ 
+B - Buffer beginning {TVX0: ^B}
+ 
+     A 'B' causes the cursor to be moved to the beginning of the
+current buffer. 
+ 
+ 
+^B - Beginning of file {<Esc>B}
+ 
+     The '^B' (Control-B) command is used to position the cursor to
+the absolute beginning of the file.  The '^B' command will always
+write out the rest of the file, then re-read the first buffer full.
+This command has the side effect of making a new backup version of the
+file.  It should be noted that any text saved in the save buffer will
+be preserved during this operation, so that the 'S' save command can
+be used to move text from the end to the beginning of a multi-buffer
+file.  The search pattern and repeat loops are retained as well.  Note
+ 
+ 
+                                 -6-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+the '^B' file beginning is similar in concept to 'B' buffer
+beginning. 
+ 
+ 
+nC - Change {^C}
+ 
+     'C' can be used to change characters.  Entering 'nC' is exactly
+equivalent to entering 'nKI'.  The command will cause 'n' characters
+to be killed, and insert mode to be entered.  The escape must be used
+to terminate the insert as usual. 
+ 
+ 
+nD - Down {^D}
+ 
+     'D' moves the cursor down n lines.  The cursor is placed at the
+beginning of the new line.  For convenience, the ENTER key performs
+the identical function. 
+ 
+ 
+n^D - Down in column {<Esc>D}
+ 
+     Control-D ('^D') is similar to 'D', except the cursor remains in
+the original column.  Columns are defined as characters from the
+beginning of the line, so if a line has tab characters in it, the
+cursor may appear to move out of column on the screen. 
+ 
+ 
+E - End of the buffer {^E}
+ 
+     'E' causes the cursor to be placed at the end of the current text
+buffer. 
+ 
+ 
+n^E - Edit repeat buffer n {<Esc>E}
+ 
+     When making repeat loops, it is easy to make a mistake.  The ^E
+command allows any of the repeat buffers to be edited, and then the ^R
+command can save the corrected repeat buffer back.  If you don't give
+a value for n, the currently selected buffer is used.  If n is from 1
+to the maximum number of repeat buffers, then that repeat buffer will
+be selected for editing. 
+ 
+     The ^E command will insert the contents of the selected repeat
+buffer into the current text buffer.  The repeat buffer will be
+inserted above the current text line.  The repeat buffer will start
+with a sequence of '#n:<', where n will be replaced by the repeat
+buffer being edited.  The '#n:' identifies which buffer you are
+editing, and is used by the ^R store repeat buffer command to identify
+the buffer to save to.  Escapes will be represented by '^[' instead of
+the '$' used when entering a repeat buffer initially.  A '>^[^['
+identifies the end of the repeat loop. 
+ 
+     It is possible to make as many changes as needed to the repeat
+loop.  Escapes can be added by using '27i'.  If you want to save the
+loop in a different buffer, you can change the number after the '#'.
+It is also important to maintain the '#n:<' start and '>^[^[' ending
+ 
+ 
+                                 -7-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+sequences.  Also, loops are limited to a maximum of 100 characters.
+You can have carriage returns within the body of a loop, too.  If you
+want to create a new buffer, you can use ^E on an empty repeat buffer
+to get the required '#n:<>^[^[' loop sequence. 
+ 
+     After you have edited the repeat buffer, it can be saved with the
+'^R' command.  You must place the cursor anywhere on the first line of
+the repeat buffer before using '^R'.  When you press ^R, the buffer
+will be saved in the buffer indicated right after the '#'.  Thus,
+unlike ^E, the ^R command accepts no n value. 
+ 
+ 
+nF - Find text pattern {^F}
+ 
+     'F' is used to find a text pattern.  When 'F' is entered, the
+message 'Find?' is echoed on the bottom line.  You then enter the
+pattern to find, terminated with the escape key (echoed as $).  When
+the count 'n' is positive (which is the default), find searches the
+current buffer from the current position forward.  If 'n' is negative,
+then a backwards search is performed starting with the previous line.
+(Use '^F' to search across buffers).  Normally, 'F' ignores the case
+of the letters in the pattern.  If the ':F' parameter is set with 0,
+then 'F' command will match only the exact case.  See the ':' set
+parameter command for details of the ':F' parameter.  If the pattern
+is not found, "Not found" will be printed and the cursor remain at its
+original location.  If the pattern is found, then the cursor will be
+placed immediately following the pattern.  The pattern may be at most
+100 characters long.  If the pattern is only an escape, then the
+previous pattern will be used again (same as ';'). 
+     TVX supports extensive wild card matching.  The ':M' set
+parameter controls whether or not wild card matching is turned on.
+Normally, it is.  The wild card matching in TVX is based on the
+concept of 'sets of special characters'.  TVX predefines 6 sets of
+characters, and allows the user to define one additional set.  When a
+special control character is included as part of the find pattern,
+then any character in the specified set will match the pattern.  The
+predefined sets are:
+
+    ^A - Alphanumeric characters: a-z, 0-9
+    ^D - Digits: 0-9
+    ^L - Letters: a-z
+    ^O - Other characters: all characters except a-z, 0-9
+    ^P - Punctuation: '.', ',', '!', '?'
+    ^X - Any character: any printable character
+    ^U - User character: any character in user set, set by ':U'
+
+     Any of the sets may be specified by entering the proper control
+character in the find pattern: Control-A for the ^A set.  Thus,
+entering a find pattern of '^L^D' would match any letter followed by
+any digit.  Since it may be desirable to match a sequence of one of
+the character sets, two prefix characters are supported.  A '^W'
+before one of the above sets will match a 'word' of that set.  Thus,
+'^W^L' will match any word, and '^N^D' will match any number.  The
+find pattern 'st^W^L' would match words starting with 'st'.  The '^N'
+prefix is used to make a 'word' of characters NOT included in the
+given set.  Thus, '^N^L' will match a 'word' of characters NOT
+ 
+ 
+                                 -8-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+including the letters a-z.  A match 'word' consists of any sequence of
+characters (at least one character long) found in the given set, up to
+the first character not in the set.  End of lines also terminate all
+wild card patterns.  The only real way to adequately understand TVX
+wild cards is to use them in practice. 
+ 
+ 
+^F- Find across buffers {<Esc>F}
+ 
+     '^F' (Control-F) is the same as Find, except the search will
+cross buffer boundaries.  Whenever a buffer is searched without
+finding the pattern, the next buffer will be read in.  The screen will
+not change until the pattern is found or the file is exhausted.  If
+the pattern is not found anywhere, then the entire file will have been
+written out, and there will be an empty buffer.  The '^B' command may
+be used at that point to get back to the beginning of the file. 
+ 
+ 
+G - Get saved text {<Esc>G}
+ 
+     'G' is used with 'S' and '^Y' to move text around.  'G' causes
+the text in the save buffer to be inserted before the current cursor
+position.  The saved text remains in the save buffer.  There must be
+at least one line of text in the main buffer before 'G' will get the
+text from the save buffer. 
+ 
+ 
+^G - Get killed line (unkill) {^G}
+ 
+     The '^G' (Control-G) unkill command can be used to "unkill" one
+line, which will be the last line killed with '^K'.  If the last
+command was 10^K (kill 10 lines), then '^G' will retrieve only the
+last line killed.  The "unkilled" line will be inserted right before
+the current cursor position.  It is also possible to move single lines
+around the text buffer using '^K' and '^G' - but be cautious.  Any
+other '^K' command will reset the last killed line.  '^G' can also be
+used to retrieve the entire line involved in a "'" (single quote) or
+'"' (double quote) command. 
+ 
+ 
+nH - Half page {<Esc>H}
+ 
+     'H' is similar to the 'P' Page command.  It causes the cursor to
+move down a half screenful.  This will be typically be 12 lines.  A
+negative count (e.g.  -h) moves up a half screen. 
+ 
+ 
+nI - Insert {<Esc>I}
+ 
+     'I' causes the editor leave command mode and enter insert mode.
+Following the 'I', all text typed in is inserted into the file until a
+terminating escape is typed.  Inserted text is echoed on the screen as
+it is inserted.  If any value is supplied for n (the default no n is
+not used), then only one character is inserted, and it will have the
+ascii value of n. This is the method used to enter characters that
+cannot normally be entered in insert mode, such as escape or
+ 
+ 
+                                 -9-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+characters not on the keyboard.  The message "### Insert Mode ###" is
+displayed on the bottom line when insert mode is entered (except when
+inserting on the very last line of the file).  Many versions of TVX
+will change the shape of the cursor when insert mode is entered.
+{Insert is useful in the modeless version of TVX for entering either
+single characters (<Esc>nI), or when several control characters will
+be entered (e.g., ^L).}
+ 
+ 
+J - Jump back {<Esc>J}
+ 
+     The 'J' command will cause a "jump" back to the line of the
+previous cursor position.  Suppose the cursor was positioned somewhere
+in the middle of the file.  If the 'E' end command was entered, the
+cursor would move to the end of the current buffer.  If the 'J'
+command was then used, the cursor would return to the original line.
+It makes it convenient to flip back and forth between two points in
+the file.  It is also useful if a large cursor movement command is
+accidentally entered (like when you thought you were in insert mode). 
+ 
+ 
+nK - Kill Character forward {^K}
+ 
+     The 'K' command kills or deletes characters in a forward
+direction.  '1K' would delete the character the cursor is positioned
+over, and '5K' would delete the next 5 characters. 
+ 
+ 
+n^K - Kill lines {<Esc>K}
+ 
+     '^K' (Control-K) is used to kill an entire line.  n=1 kills the
+current line, negative n kills previous lines, while positive n kills
+following lines. 
+ 
+ 
+nL - Left {^L}
+ 
+     'L' moves the cursor n characters to the left. 
+ 
+ 
+M - Memory and Status {<Esc>M}
+ 
+     The 'M' command is used to display certain status information.
+The name of the file currently being edited (where the output will go)
+is displayed, followed by the version of TVX.  The number of free
+characters currently available in the buffer is then given (this does
+not include characters that are free but not compacted yet), followed
+by the number of the last line of the file.  Finally, the currently
+selected repeat loop buffer and maximum number of repeat buffers
+allowed is shown. 
+ 
+ 
+nN - Note current location {^N}
+ 
+     This command notes the current line location.  Values of 1 to 9
+are allowed for n. After entering '3n' for example, you can then move
+ 
+ 
+                                 -10-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+around the buffer, and later use '3^n' to return to the noted
+location.  This command really remembers the current line, relative to
+the current buffer beginning.  Thus if you edit out lines before the
+noted location, you will not return to the same line. 
+ 
+ 
+n^N - Go back to noted location {<Esc>N}
+ 
+     This command is used to go back to a noted location. 
+ 
+ 
+nO - Open line for insert {^O}
+ 
+     The 'O' command will cause n blank lines to be inserted, and the
+cursor positioned at the beginning of the first new line.  Following
+the 'O' command, insert mode is automatically entered.  The 'O'
+command is a convenient method for inserting new lines. 
+ 
+ 
+^O - Operating System call {<Esc>O}
+ 
+     Some versions of TVX (MS-DOS and Unix, for example), will allow
+an operating system command to be executed from inside of the editor.
+For example, it might be useful to get a directory listing.  On
+MS-DOS, after entering the ^O, the normal 'dir' command is entered.
+After the directory is shown by the operating system, pressing any key
+will return to the edited file. 
+     This command has one particularly valuable application - editing
+other files.  For example, you may want to add part of another file to
+the file you are currently editing.  Use the '^O' command to edit the
+other file, and create a temporary file with the part you want to
+add.  Then you can use the '^Y' yank command to read in the file.  For
+example: Use '^O' to get enter operating system command prompt.  Then
+enter something like 'tvx otherfile -o=tempfile'.  You will get a new
+copy of tvx with the otherfile being edited.  Edit it to get the part
+you want.  When you exit that copy of tvx, the part you want to add
+will be in tempfile.  You can now yank it into the current file. 
+ 
+ 
+nP - Page {^P}
+ 
+     The 'P' commands is the same as '25D' on 24 line terminals, and
+effectively causes a new screenful to be written.  It is a convenient
+method for scanning through the file.  The n count argument specifies
+the number of 'pages' to scroll.  Negative values for n causes reverse
+scrolling. 
+ 
+ 
+^P - Print Screen {<Esc>P}
+ 
+     If '^P' (Control-P) is entered, and a printer is on line, the
+entire contents of the screen will be sent to the printer.  Several
+consecutive sequences of "P^PP^P..." (or a repeat loop: "10<P^P>$$")
+can be used to print longer portions of the file.  This command will
+not normally work on time shared systems such as Unix. 
+ 
+ 
+ 
+                                 -11-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+nR - Right {^R}
+ 
+     'R' causes the cursor to move n characters to the right.  For
+convenience, the space bar is equivalent to 'R'. 
+ 
+ 
+^R - Restore repeat buffer {<Esc>R}
+ 
+     The '^R' command will save an edited repeat buffer and delete the
+edited buffer from the text.  See '^E' for a complete summary of
+editing repeat buffers. 
+ 
+ 
+nS - Save text {<Esc>S}
+ 
+     Besides the normal text buffer, TVX has a separate "save"
+buffer.  This buffer can be used to move blocks of text from one part
+of the file to another.  A simple 'S' command will save the current
+line in the save buffer, and move the cursor down one line.  On the
+screen, 'S' appears to have the same behavior as 'D'.  If n is
+supplied, then n lines will be saved.  'S' can also be used
+sequentially.  If no other commands intervene, consecutive 'S'
+commands will continue adding lines to the save buffer.  If any other
+commands are entered between consecutive 'S' commands, the previous
+contents of the save buffer will be lost, and replaced with the new
+line.  The 'A' command can be used to append lines to the current save
+buffer without losing the previous contents. 
+     The '/' command can be used with 'S' and 'G' to move text.  Use
+'S' to save the text to be moved, immediately delete the saved text
+with '/', then insert it at the new place with 'G'.  The last line of
+the file is can be saved in the save buffer only once, and an error
+message will be printed if you attempt to save the last line a second
+time. 
+ 
+ 
+nT - Tidy text {^T}
+ 
+     The 'T' tidy command is specifically designed to improve the
+appearance of strictly text files.  When entering letters and
+documents, is it usually desirable to have the lines filled to the
+right margin.  However, after editing, it is common to find a jumble
+of uneven, difficult to read source lines.  The 'T' tidy command will
+fill source text using the same right margin currently set for
+auto-wrap. 
+     Tidy performs essentially the same operation as a word processor
+fill function.  Word are combined on one line until the auto-wrap
+margin is passed.  The 'n' count refers to the total number of
+resulting lines, not the number of original lines.  Specifying a large
+'n' will tidy large sections of a document.  The tidy command
+recognizes lines beginning with blanks, tabs, or a period and blank
+lines as special.  It will not fill those lines, thus preserving
+paragraphs, tables and NROFF-like dot commands. 
+     One interesting capability of tidy is to put one word per source
+line.  Set the auto-wrap margin to 2, then use the tidy command.  The
+result will put one word per line. 
+ 
+ 
+ 
+                                 -12-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+^T - TERMINATE - ABORT EDIT SESSION {<Esc>T}
+ 
+     The '^T' (Control-T) command aborts directly to the operating
+system.  The original file is left untouched, and no backup file is
+created.  This is a fairly dangerous command in that all editing
+performed will be lost (unless the '^B' file beginning command was
+used).  You will be asked to confirm the '^T' command with a Y or N.
+If the '^T' is performed accidentally, the backup log file can be
+applied to the current version of the file after the '^T' has been
+edited out of the log file (no backup file will have been created
+after the '^T').  The '^T' command is most useful when you decide you
+don't want to make any changes and want to exit from TVX quickly.
+Exiting with the '^T' command is similar to using the 'R' read only
+switch at the beginning. 
+     If you have used the '^B' command, a work file copy of the
+original will have been written out containing all the edits performed
+before the '^B'.  When you use '^T' and this work file has been saved,
+a message informing you of its existence will be printed.  You can
+then either use that file, or delete it at the operating system
+level. 
+ 
+ 
+nU - Up {^U}
+ 
+     The 'U' command moves the cursor up n lines, positioning the
+cursor at the beginning of the line. 
+ 
+ 
+n^U - Up in column {<Esc>U}
+ 
+     The '^U' (Control-U) is the opposite of '^D', and moves the
+cursor up in column. 
+ 
+ 
+nV - Verify the screen {^V}
+ 
+     In regular screen editing mode, the 'V' command causes the screen
+to be rewritten.  This is sometimes necessary to get a true version of
+the screen after error messages have been written or when editing
+lines longer than 80 columns.  On terminals without reverse screen
+scroll, the 'V' command forces the cursor to the home display line
+(usually line 16).  In screen mode, 'V' ignores any n.
+     In tty mode, the 'V' command is used to type lines from the file
+on the terminal.  A negative n will type out lines preceding the
+current line.  An n of 1 types the current line, with the current
+cursor position indicated by '/'.  An n greater than 1 types the
+current line, plus the following n-1 lines.  A command '-12v12v' would
+type 24 lines on the terminal: 12 before, the current line, and 11
+following. 
+ 
+ 
+n^W - Write out buffer, read next one {<Esc>W}
+ 
+     The '^W' (Control-W) command is used to explicitly go from one
+buffer to the next.  By default, when n is >= 0, the entire current
+buffer is written to the new version of the file being edited, and the
+ 
+ 
+                                 -13-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+next buffer full of the original file (if any) is read in.  If a
+negative n is supplied (any negative value, most easily -^W), then
+only the part of the buffer up to (but not including) the current line
+is written.  Then as much more of the file as possible is read to the
+end of the current buffer.  Thus, a negative n is useful when a file
+won't fit, and the split point is at an awkward place.  It is also
+useful when a '^Y' yanked file won't fit. 
+ 
+ 
+^X - eXit {<Esc>X}
+ 
+     '^X' (Control-X) causes the remainder of the file to be written
+out, and the editor exited.  The entire file will be written, no
+matter where the cursor happens to be positioned when the '^X' command
+is entered.  This is the normal conclusion of an editing session.  All
+work files are deleted, the original file renamed to the back up file,
+and the newly edited file renamed to the original name.  See the
+appendix on tvx file handling conventions for more details. 
+ 
+ 
+n^Y - Yank text to/from external file (file merge) {<Esc>Y}
+ 
+     A '^Y' (Control-Y) with a positive n is similar to 'S' save, but
+the text saved in the save buffer is read in from an external file
+instead of from the current buffer.  When '^Y' is entered, the save
+buffer is cleared, the buffer compactor invoked, and then the user is
+prompted for the name of the file to read.  TVX then will read as much
+of the external file into the save buffer as it can.  The 'G' command
+can then be used to insert the save buffer text into the current file
+at the desired location.  If there is not enough room in the save
+buffer to hold the entire file, then only part of the file is read and
+a diagnostic message printed.  The '-S' switch can be used when TVX is
+first invoked to reserve a large save buffer for merging larger
+files.  You can also use the '-^W' command to write out the front part
+of the file, and then 'G' to get the saved file.  (Note: '^Y' may not
+be used from within a log command file.  See section on backup log
+file.)
+     A negative n (e.g., '-^Y') can also be used with the yank
+command.  If the n is negative, then the contents of the save buffer
+will be written to a new file.  After '-^Y' is entered, you will be
+prompted for the name of the output file, and then the contents of the
+save buffer will be written to that file. 
+ 
+ 
+nBACKSPACE - Delete previous character {BS}
+ 
+     The BACKSPACE key will delete the previous character on the
+screen.  It is also used for editing input keystrokes for Insert,
+Find, and repeat loops. 
+ 
+ 
+n; - Find again
+ 
+     The ';' (semicolon) command causes the previous pattern to be
+searched for again.  This is more convenient that entering 'F$'
+again.  The 'n' has the same meaning, positive searches forwards,
+ 
+ 
+                                 -14-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+negative backwards. 
+ 
+ 
+/ - delete last thing {<Esc>/}
+ 
+     The '/' (slash) command is useful when used with 'F' (find), 'S'
+(save), 'G' (get), 'TAB' (word right), and '{' (word left).  It causes
+the last pattern used to be deleted.  Thus "Fxxx$/Iyyzz$" will delete
+the pattern 'xxx' and insert 'yyzz'.  When used after an 'S', it
+causes the just saved lines to be deleted from the text buffer (but
+not the save buffer).  After the G, it causes the text just inserted
+from the save buffer to be deleted from the text buffer.  After a
+'TAB' or '{', '/' will delete the word or words just skipped over.
+Slash must be used immediately following an 'S', 'G', 'TAB', '{', 'F',
+'^F', or ';' command.  This command knows how to take wild card
+matches into account. 
+ 
+ 
+= - delete last thing and enter insert mode {<Esc>=}
+ 
+     The '=' (equals) command is the same as the '/' command, except
+insert mode is automatically entered, thus achieving the effect of
+'/I' command sequence. 
+ 
+ 
+' - Delete previous part of line (single quote) {<Esc>'}
+ 
+     The "'" command will delete all the characters in the current
+line before the cursor. 
+ 
+ 
+" - Delete rest of line (double quote) {<Esc>"}
+ 
+     The '"' command will delete from the cursor forward to the end of
+the line.  The "end of line" mark will remain.  Note that the single
+quote has one tick, representing the "first" part of the line, while
+the double quote has two ticks, representing the "second" part of the
+line. 
+ 
+ 
+, - beginning of line (comma) {<Esc>,}
+ 
+     The ',' command will move the cursor to the beginning of the
+current line. 
+ 
+ 
+. - end of line (period) {<Esc>.}
+ 
+     The '.' command will move the cursor to the end of the current
+line. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+                                 -15-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+* - Insert last pattern found {<Esc>*}
+ 
+     The last pattern found with the find command (up to 100
+characters) is saved in an internal buffer.  The '*' command will
+insert that pattern into the text at the current cursor location.  If
+the last find pattern included wild card characters, the pattern saved
+will be the actual text matched, and not the wild cards themselves.
+You must be back in command mode to use this command. 
+ 
+ 
+nTAB, n{ - Skip over words {<Esc>^I, <Esc>{}
+ 
+     The 'TAB' (TAB key, CTRL-I) and '{' commands skip over words.  A
+word is any contiguous set of alphabetic characters (a-z) or digits
+(0-9).  'TAB' moves forwards, while '{' moves backwards.  The 'n'
+count may be used to skip over several words at once, and a negative
+count reverses the direction of the move.  A value of 0 for n will
+move the cursor to the beginning of the current word rather than the
+previous word as -{ would.  Note that '{' is usually aliased to '['
+since these are often reversed case on different terminals. 
+ 
+ 
+n< - begin repeat loop {<Esc><}
+ 
+     TVX has up to 9 different repeat loop buffers which allow an
+arbitrary sequence of commands to be repeatedly executed.  When n< is
+typed, the editor echoes 'Repeat: n<' at the bottom of the screen.
+The user then types in any series of commands to be repeated n times.
+The repeat command is terminated with a matching '>' and a double
+escape (echoed as $$).  Repeat loops may not be nested.  The repeat
+loop has two typical useful functions: one is to replace multiple
+occurrences of a string with another (e.g., "10<fone$=two$>$$"), a
+second is to save a complicated sequence of commands to be repeated as
+necessary with the '&' command (i.e., a macro facility).  Each repeat
+loop may have up to 100 characters. 
+     When a repeat loop is entered from the keyboard, it is saved in
+one of up to 9 repeat loop buffers, each identified by an integer
+value.  The repeat buffer which is currently in use can be set with
+the 'n:R' command.  Buffer 1 will be used by default.  The number of
+repeat buffers available and the currently active one can be
+determined by using the 'M' command.  The availability of repeat
+buffers allows the definition of 'edit macros'.  Commonly used
+sequences of editor commands can be saved in a given repeat buffer,
+then selected with 'n:R' and executed with the '&' command. 
+     For example, "3:R<fpat1$>$$" would select repeat buffer 3 and
+enter the repeat command into it (and execute the command once).
+Other "macros" could be entered in other buffers, and then the given
+example used again by "3:R&".  A count 'n' of 0 can be used to enter a
+macro without executing it.  The indirect command file facility ('@'
+command) can also be used to define and load commonly used macros.
+The results of using one repeat buffer from within another is not
+guaranteed, and should be tried only at your own risk. 
+     The '#' command has been provided to simplify the above
+sequence.  Entering '23#4' for example, is exactly the same as
+entering '4:r23&'.  The n value is a count, and the single digit after
+the '#' is the repeat buffer to use. 
+ 
+ 
+                                 -16-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+>$$ - End of repeat loop {>$$}
+ 
+     The repeat loop is terminated by a '>' and a double escape.
+Note: '$$' represents escape. 
+ 
+ 
+n& - execute repeat loop {<Esc>&}
+ 
+     The '&' command executes the commands in the currently selected
+repeat buffer n times. 
+ 
+ 
+n#k - execute repeat loop k {<Esc>#}
+ 
+     This command is an easy to execute a specified repeat buffer.
+The n is a count and the k is a single digit repeat buffer number.
+This command is exactly equivalent to 'k:rn&'.  Repeat buffer k
+becomes the current buffer after '#' is executed. 
+ 
+ 
+n~ - change case {<Esc>~}
+ 
+     This command chanages the case of the character under the
+cursor. 
+ 
+ 
+? - Help {<Esc>?}
+ 
+     The '?' command causes help screens to be displayed.  There are
+two help screens.  The first includes a summary of transitory values:
+a summary of settable ':' parameters, the contents of the repeat and
+find buffers, as well as buffer space left.  On 16 bit processors, if
+the space left is greater than 32,000 characters, then 30,000+x will
+be shown, where the total is 30,000 plus x. The first screen also
+shows the last 16 commands you have entered.  This may be useful if
+you entered "commands" while you thought you were in insert mode to
+see what your keystrokes might have done.  The second screen of help
+summarizes the command set. 
+ 
+ 
+@ - Invoke command file {<Esc>@}
+ 
+     Causes a prompt for command file name.  Commands in that file are
+then read in and executed.  See description of backup command files
+below for details.  This command is most useful for loading repeat
+macros. 
+ 
+ 
+n:P - Set special parameters {<Esc>:}
+ 
+     The ':' (colon) command is used to set several TVX
+characteristics.  The value n entered before the ':' is the value to
+set the parameter to, and the character P that follows the ':' defines
+the parameter to set.  Valid parameters include:
+ 
+n:A - set autoindent.  A value of 1 turns on autoindent, 0 off.
+ 
+ 
+                                 -17-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+   Autoindent is useful for programmers.  When autoindent is on, each
+   new line started while in insert mode will be indented to the same
+   leading tab/blank space as the previous line.  Use blanks or tabs
+   to add indentation, and backspace to backup over indentation. 
+ 
+n:C - set cut mode.  When cut mode is enabled (1), killed lines are
+   also saved in the save buffer.  This works for individual kill
+   commands, e.g.  'kkk' will save only the line associated with the
+   3rd k, while '3k' will save 3 lines in the save buffer.  With cut
+   mode off, kill line does not save the lines in the save buffer. 
+ 
+n:D - set home "display" line to n. The display line is the line the
+   cursor homes to after a verify command.  (Default home display
+   line: 16 on 24 line terminals, 9 on 16 line terminals.)
+ 
+n:E - Expand tab value.  The default value for ':E' is 8, which causes
+   the tab character (^I) to be expanded to multiples of 8 columns.
+   This is the standard used on most systems.  Setting ':E' to 0 will
+   cause tabs to be displayed as '^I' instead.  Other values are
+   possible, but less useful. 
+ 
+n:F - Find case mode: n <= 0 sets find mode to search for exact case
+   of pattern, n > 0 (default) set search mode to ignore upper/lower
+   case. 
+ 
+n:M - Match wild cards.  (default=1).  If on, then matching of the TVX
+   wild card sets is enabled.  If off, then the wild card control
+   characters will match the actual control characters in the file. 
+ 
+:o - set output file name.  When ':o' is entered, you will be prompted
+   for the name of the edited output file.  This overrides the '-o'
+   command line switch, and can be used to change your mind about the
+   name of the edited file.  If the output file name is different than
+   the input file name, the input file will not be renamed to the
+   backup file name. 
+ 
+n:R - select repeat buffer n. (default=1).  Repeat buffer n becomes
+   the current repeat buffer executed with the '&' command.  The 'm'
+   status command will show how many repeat buffers are available for
+   a given implementation. 
+ 
+n:S - scroll lines: This parameter sets how many lines the cursor will
+   move before the screen scrolls.  The exact effect of the scroll
+   parameter depends on the terminal characteristics.  On terminals
+   that allow a blank line to be inserted at the top, ':S' sets how
+   many lines cursor will move above and below home display line
+   before scrolling.  Default is 0. Changing the scroll value to 4
+   would let the cursor move up and down 4 lines from the home display
+   line before actually scrolling the screen.  Some users might find
+   this update mode more pleasant to use.  This will be almost
+   essential on heavily loaded time shared systems.  For terminals
+   that do not allow a blank line to be inserted at the top (no
+   reverse scroll), 'n:S' sets how many lines cursor will move above
+   the home display line before the screen is rewritten.  Default is
+   14, which causes the cursor to move nearly all the way to the top
+   before rewriting the screen. 
+ 
+ 
+                                 -18-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+n:T - tty mode.  A 0 is screen mode, a 1 is tty mode. 
+ 
+:U - set User Wild Cards.  After entering :U, you will be prompted for
+   a user wild card set.  You can use backspace to correct your entry,
+   and '<Esc><Backspace>' to enter backspace and '<Esc><Esc>' to enter
+   escape. 
+ 
+n:V - virtual window lines.  The 'n:V' will set the virtual window to
+   n lines.  N must be between 3 and the number of hardware lines on
+   the terminal.  A smaller virtual window is extremely useful on busy
+   time shared systems, or when TVX is used over a telephone line at a
+   relatively slow baud rate.  Typically, a virtual window of 7 or 9
+   is big enough to show a reasonable part of the file, yet small
+   enough to reduce the overhead of screen update at slow speeds.  A
+   window of 3 or 5 can even be used if needed.  Note that the virtual
+   window can be set at start up time by using the '-#' switch.  The
+   virtual window will use the top n physical lines of the display.
+   Error messages and prompts will still be displayed on the bottom
+   physical line.  Scanning up with 'u' will cause the lines to be
+   scrolled onto the unused part of the screen, and gives a true
+   picture of the file showing more lines than the window size. 
+ 
+n:W - set auto wrap width.  The ':W' parameter sets the column number
+   used for auto wrap mode.  When the auto wrap is set to a value
+   greater that 1, TVX will automatically insert an end of line when
+   the user types the first blank after the given column.  Normally,
+   the user must manually hit the RETURN key to force an end of line.
+   The auto wrap mode allows continuous entry of text without worrying
+   about the right margin.  A good value to use for ':W' is 10 columns
+   less than the screen width (70 on 80 columns screens). 
+ 
+An invalid parameter value or name causes an error message. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+                                 -19-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+                   *** BACKUP LOG FILE FEATURE ***
+ 
+     TVX has a backup log file feature.  When the feature is enabled,
+all commands entered in any given session are saved on a file called
+"BACKUP.LOG" on the current directory or drive.  If for some reason
+you destroy your file during an editing session (like accidentally
+entering "100^K" instead of "100K"), you won't have to manually
+re-edit the backup version of the file.  (By default, the log file is
+disabled.  The 'L' invocation time switch will respectively disable or
+enable the log file feature.)
+ 
+     The "BACKUP.LOG" file contains all the commands you entered in
+the last session.  Most commands will appear in the log file as you
+entered them: R, U, D, etc.  However, all control characters,
+backspace, and the atsign are encoded in the log file to make them
+appear as printable characters.  The atsign '@' is used as an encoding
+character.  So, for example, tabs appear as '@I', escapes as '@[',
+RETURNs as '@M', and so on.  Control-A would appear as '@A'.  The '@'
+itself would appear as '@@'.  Backspace appears as '@H'.  These escape
+sequences may be split across the end of a line in the log file.  The
+end of line marks in the log file are not part of the command stream
+and are ignored. 
+ 
+     The procedure for using the "BACKUP.LOG" file to restore your
+file is as follows.  When you realize you have made a mistake, enter
+the '^X' exit command.  Copy "BACKUP.LOG" to a temporary working
+file.  Now edit that temporary version of the log file to remove the
+mistakes, which should be near the end of the file. 
+ 
+     Once the log file has been edited to remove the bad commands, you
+should then re-edit the original file (the one without the mistakes).
+The latest version of the file will be the one with the mistakes, and
+should usually be killed.  Start TVX and read in the file.  Then enter
+the '@' command and supply the name of the "repaired" log file.  All
+the commands in that log file will be applied to the original file.
+You should be careful to start the '@' command when the cursor is at a
+specific place such as the beginning of the file.  After the '@'
+command is finished, your file will be in the same shape it was before
+the mistake. 
+ 
+     For example, suppose you are editing a file called "MYFILE0.TXT"
+and that you accidentally kill 100 lines.  When you realize your
+mistake, you enter '^X' to exit.  Then you should copy or rename the
+BACKUP.LOG file to a new temporary file - say FIX.LOG.  The current
+version of the file you were editing is the bad file and should be
+deleted.  On CP/M and MS-DOS versions, you would rename MYFILE0.BAK to
+be MYFILE0.TXT again.  Then, edit FIX.LOG to remove the command that
+killed 100 lines and the quit command ("100@K@X").  Exit again, and
+re-edit MYFILE0.TXT.  If you then enter the '@' command, and respond
+with FIX.LOG as the name of the command file, your file will be
+brought back to the state it was in right before the '100^K'. 
+ 
+     There are some special cases that require special attention when
+using the backup log file.  These cases involve the entry of file
+names or strings, such as for '^Y', ':o', and ':u'.  For 'Y', the file
+read as a part of the given command is read using the same I/O channel
+ 
+ 
+                                 -20-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+as the backup log file input, and thus both cannot be used at the same
+time.  If the backup log file contains any '^Y' commands (displayed in
+the log file as '@Y'), you must remove them.  Obviously, this will
+alter the order of the commands in the file, and you will need to use
+a special procedure.  Suppose, for example, that the backup log file
+contained one '^Y' command.  Make two copies of the backup log file.
+Edit the first, and remove all commands following the '^Y' command,
+including the '^Y' command.  Then edit the other copy, and remove all
+commands before the '^Y', including the '^Y'.  Then, edit the backup
+copy of the original file.  First, apply the first backup log file.
+This will get you to the point right before the '^Y'.  Then without
+changing the cursor position, manually enter the '^Y' command and file
+name.  Finally, apply the second copy of the backup log file. 
+ 
+     For ':o' and ':u', the filename or user set are not save as part
+of the log file, and you will in fact be prompted for the file name or
+user set while the log file is being executed.  There is no real clean
+way around this. 
+ 
+     It is also possible to write log command files of your own to
+carry out specific commands.  This allows the creation of "macros"
+that can be executed as needed.  When creating log files of your own,
+you should remember that control characters and backspaces must appear
+as encoded characters.  The '@' is the encoding character.  Control
+characters will appear as '@' followed by the appropriate letter: '^I'
+= '@I', enter = '@M', etc.  An '@' itself is '@@', and backspace is
+'@H', although you should never need a backspace in your own files
+(use -K). 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+                                 -21-
+
+ 

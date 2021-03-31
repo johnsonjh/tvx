@@ -1,0 +1,335 @@
+/* -----------------  Various terminal definitions ---------------------- */
+/* ********************************************************************** */
+#ifdef IBMPC
+    EXTERN int addx = 31;		/* amount to add to get x */
+    EXTERN int addy = 31;		/* to get y */
+    EXTERN char cxychr = 0;		/* true if convert xy bin to ascii */
+    EXTERN char cversn[12] = "IBM-PC";     /* a version to identify config */
+    EXTERN char cxy1st = 'l';			/* l if line first, c if column 1st */
+    EXTERN char cxybeg[8] = {18,0,0,0,0,0,0,0};	/* start xy control seq  */
+    EXTERN char cxymid[8] = {0,0,0,0,0,0,0,0};  /* middle xy control seq */
+    EXTERN char cxyend[8] = {0,0,0,0,0,0,0,0};  /* end sequence */
+    EXTERN char cerrbg[8] = {16,0,0,0,0,0,0,0}; /* string to print when errors start */
+    EXTERN char cerred[8] = {14,0,0,0,0,0,0,0};  /* when errors done */
+    EXTERN char ctopb[8] = {3,0,0,0,0,0,0,0}; /* top blanks = reverse linefeed */
+    EXTERN char cinit[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	/* start up sequence */
+    EXTERN char cendit[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	/* to end session */
+    EXTERN char cbotb[8] = {10,0,0,0,0,0,0,0};  /* bottom blank line sequence */
+    EXTERN char celin[8] = {1,0,0,0,0,0,0,0};	    /* erase to end of line */
+    EXTERN char cescr[8] = {2,0,0,0,0,0,0,0};	    /* erase to end of screen */
+    EXTERN char cclears[8]={0,0,0,0,0,0,0,0};	/* clear screen, home cusor */
+    EXTERN char cdelchr[8]={0,0,0,0,0,0,0,0};	/* delete char on screen */
+    EXTERN char ccsrcm[8] = {20,0,0,0,0,0,0,0};	/* set cursor to command mode */
+    EXTERN char ccsrin[8] = {19,0,0,0,0,0,0,0};	/* set cursor to insert mode */
+    EXTERN char ciline[8] = {3,0,0,0,0,0,0,0};	    /* insert a line */
+    EXTERN char ckline[8] = {6,0,0,0,0,0,0,0};	    /* kill a line */
+    EXTERN char cundlb[8] = {4,0,0,0,0,0,0,0};	/* turn on underline */
+    EXTERN char cundle[8] = {5,0,0,0,0,0,0,0};	/* turn off underline */
+    EXTERN char cboldb[8] = {11,0,0,0,0,0,0,0};	/* start bold */
+    EXTERN char cbolde[8] = {12,0,0,0,0,0,0,0};	/* end bold */
+
+    EXTERN int dsp_mem = 0;
+    EXTERN int ddline = 16;
+    EXTERN int dscrl = 0;
+    EXTERN int dxcase = 0;
+#ifdef USECTRLZ
+    EXTERN int usecz = 1;
+#else
+    EXTERN int usecz = 0;
+#endif
+    EXTERN int autoin = 0;	/* TRUE if auto indent, FALSE otherwise */
+    EXTERN int logdef = 0;	/* backup log file by default 0->no, 1-> yes */
+    EXTERN char delkey = 8;
+    EXTERN int tvlins = 25;	/* number of lines on screen */
+    EXTERN int tvcols = 80;	/* number of columns on screen */
+    EXTERN int tvhardlines = 25;	/* real number of lines */
+    EXTERN int tvx = 0;        /* current x cursor position */
+    EXTERN int tvy = 0;        /* current y cursor position */
+    EXTERN int tvdlin = 0;     /* the "active" display line */
+    EXTERN int dsplin = 0;     /* the default display line */
+    EXTERN int tabspc = 8;     /* spacing for tabs */
+    EXTERN int leftmg = 0;	/* left margin of display */
+    EXTERN int wraplm = 0;	/* auto wrap? */
+    EXTERN int isibmpc = 1;	/* for possible use with a general version */
+
+#endif
+/* ********************************************************************** */
+#ifdef TERMCAP
+    EXTERN int addx = 0;		/* amount to add to get x */
+    EXTERN int addy = 0;			/* to get y */
+    EXTERN char cxychr = 0;		/* true if convert xy bin to ascii */
+    EXTERN char cversn[12] = ":";     /* a version to identify config */
+    EXTERN char cxy1st = 0;			/* l if line first, c if column 1st */
+    EXTERN char cxybeg[8] = {0,0,0,0,0,0,0,0};	/* start xy control seq  */
+    EXTERN char cxymid[8] = {0,0,0,0,0,0,0,0};  /* middle xy control seq */
+    EXTERN char cxyend[8] = {0,0,0,0,0,0,0,0};  /* end sequence */
+    EXTERN char cerrbg[8] = {0,0,0,0,0,0,0,0}; /* string to print when errors start */
+    EXTERN char cerred[8] = {0,0,0,0,0,0,0,0};  /* when errors done */
+    EXTERN char ctopb[8] = {0,0,0,0,0,0,0,0}; /* top blanks = reverse linefeed */
+    EXTERN char cinit[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	/* start up sequence */
+    EXTERN char cendit[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	/* to end session */
+    EXTERN char cbotb[8] = {10,0,0,0,0,0,0,0};  /* bottom blank line sequence */
+    EXTERN char celin[8] = {0,0,0,0,0,0,0,0};	    /* erase to end of line */
+    EXTERN char cescr[8] = {0,0,0,0,0,0,0,0};	    /* erase to end of screen */
+    EXTERN char cclears[8]={0,0,0,0,0,0,0,0};	/* clear screen, home cusor */
+    EXTERN char cdelchr[8]={0,0,0,0,0,0,0,0};	/* delete char on screen */
+    EXTERN char ccsrcm[8] = {0,0,0,0,0,0,0,0};	/* set cursor to command mode */
+    EXTERN char ccsrin[8] = {0,0,0,0,0,0,0,0};	/* set cursor to insert mode */
+    EXTERN char ciline[8] = {0,0,0,0,0,0,0,0};	    /* insert a line */
+    EXTERN char ckline[8] = {0,0,0,0,0,0,0,0};	    /* kill a line */
+    EXTERN char cundlb[8] = {0,0,0,0,0,0,0,0};	/* turn on underline */
+    EXTERN char cundle[8] = {0,0,0,0,0,0,0,0};	/* turn off underline */
+    EXTERN char cboldb[8] = {0,0,0,0,0,0,0,0};	/* start bold */
+    EXTERN char cbolde[8] = {0,0,0,0,0,0,0,0};	/* end bold */
+
+    EXTERN int dsp_mem = 0;
+    EXTERN int ddline = 12;	/* unix really needs scroll window */
+    EXTERN int dscrl = 6;
+    EXTERN int dxcase = 0;
+#ifdef USECTRLZ
+    EXTERN int usecz = 1;
+#else
+    EXTERN int usecz = 0;
+#endif
+    EXTERN int autoin = 0;	/* TRUE if auto indent, FALSE otherwise */
+    EXTERN int logdef = 0;	/* backup log file by default 0->no, 1-> yes */
+    EXTERN char delkey = 8;
+    EXTERN int tvlins = 0;	/* number of lines on screen */
+    EXTERN int tvcols = 0;	/* number of columns on screen */
+    EXTERN int tvhardlines = 0;	/* real number of lines */
+    EXTERN int tvx = 0;        /* current x cursor position */
+    EXTERN int tvy = 0;        /* current y cursor position */
+    EXTERN int tvdlin = 0;     /* the "active" display line */
+    EXTERN int dsplin = 0;     /* the default display line */
+    EXTERN int tabspc = 8;     /* spacing for tabs */
+    EXTERN int leftmg = 0;	/* left margin of display */
+    EXTERN int wraplm = 0;	/* auto wrap? */
+    EXTERN int isibmpc = 0;	/* for possible use with a general version */
+
+#endif
+/* ********************************************************************** */
+#ifdef VT100 
+    EXTERN int addx = 0;		/* amount to add to get x */
+    EXTERN int addy = 0;			/* to get y */
+    EXTERN char cxychr = 1;		/* true if convert xy bin to ascii */
+    EXTERN char cversn[12] = "VT-100";     /* a version to identify config */
+    EXTERN char cxy1st = 'l';			/* l if line first, c if column 1st */
+    EXTERN char cxybeg[8] = {27,'[',0,0,0,0,0,0};	/* start xy control seq  */
+    EXTERN char cxymid[8] = {';',0,0,0,0,0,0,0};  /* middle xy control seq */
+    EXTERN char cxyend[8] = {'H',0,0,0,0,0,0,0};  /* end sequence */
+    EXTERN char cerrbg[8] = {7,0,0,0,0,0,0,0}; /* string to print when errors start */
+    EXTERN char cerred[8] = {0,0,0,0,0,0,0,0};  /* when errors done */
+    EXTERN char ctopb[8] = {27,'M',0,0,0,0,0,0}; /* top blanks = reverse linefeed */
+    EXTERN char cinit[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	/* start up sequence */
+    EXTERN char cendit[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	/* to end session */
+    EXTERN char cbotb[8] = {10,0,0,0,0,0,0,0};  /* bottom blank line sequence */
+    EXTERN char celin[8] = {27,'[','K',0,0,0,0,0}; /* erase to end of line */
+    EXTERN char cescr[8] = {27,'[','J',0,0,0,0,0};	    /* erase to end of screen */
+    EXTERN char cclears[8]={0,0,0,0,0,0,0,0};	/* clear screen, home cusor */
+    EXTERN char cdelchr[8]={0,0,0,0,0,0,0,0};	/* delete char on screen */
+    EXTERN char ccsrcm[8] = {0,0,0,0,0,0,0,0};	/* set cursor to command mode */
+    EXTERN char ccsrin[8] = {0,0,0,0,0,0,0,0};	/* set cursor to insert mode */
+    EXTERN char ciline[8] = {0,0,0,0,0,0,0,0};	    /* insert a line */
+    EXTERN char ckline[8] = {0,0,0,0,0,0,0,0};	    /* kill a line */
+    EXTERN char cundlb[8] = {0,0,0,0,0,0,0,0};	/* turn on underline */
+    EXTERN char cundle[8] = {0,0,0,0,0,0,0,0};	/* turn off underline */
+    EXTERN char cboldb[8] = {0,0,0,0,0,0,0,0};	/* start bold */
+    EXTERN char cbolde[8] = {0,0,0,0,0,0,0,0};	/* end bold */
+
+    EXTERN int dsp_mem = 0;
+    EXTERN int ddline = 16;
+    EXTERN int dscrl = 0;
+    EXTERN int dxcase = 0;
+#ifdef USECTRLZ
+    EXTERN int usecz = 1;
+#else
+    EXTERN int usecz = 0;
+#endif
+    EXTERN int autoin = 0;	/* TRUE if auto indent, FALSE otherwise */
+    EXTERN int logdef = 0;	/* backup log file by default 0->no, 1-> yes */
+    EXTERN char delkey = 8;
+    EXTERN int tvlins = 24;	/* number of lines on screen */
+    EXTERN int tvcols = 80;	/* number of columns on screen */
+    EXTERN int tvhardlines = 24;	/* real number of lines */
+    EXTERN int tvx = 0;        /* current x cursor position */
+    EXTERN int tvy = 0;        /* current y cursor position */
+    EXTERN int tvdlin = 0;     /* the "active" display line */
+    EXTERN int dsplin = 0;     /* the default display line */
+    EXTERN int tabspc = 8;     /* spacing for tabs */
+    EXTERN int leftmg = 0;	/* left margin of display */
+    EXTERN int wraplm = 0;	/* auto wrap? */
+    EXTERN int isibmpc = 0;	/* for possible use with a general version */
+#endif
+/* ********************************************************************** */
+#ifdef ATARI520				/* like a 25 line VT-52! */
+    EXTERN int addx = 31;		/* amount to add to get x */
+    EXTERN int addy = 31;			/* to get y */
+    EXTERN char cxychr = 0;		/* true if convert xy bin to ascii */
+    EXTERN char cversn[12] = "520ST";     /* a version to identify config */
+    EXTERN char cxy1st = 'l';			/* l if line first, c if column 1st */
+    EXTERN char cxybeg[8] = {27,'Y',0,0,0,0,0,0};	/* start xy control seq  */
+    EXTERN char cxymid[8] = {0,0,0,0,0,0,0,0};  /* middle xy control seq */
+    EXTERN char cxyend[8] = {0,0,0,0,0,0,0,0};  /* end sequence */
+    EXTERN char cerrbg[8] = {27,'p',0,0,0,0,0,0}; /* string to print when errors start */
+    EXTERN char cerred[8] = {27,'q',0,0,0,0,0,0};  /* when errors done */
+    EXTERN char ctopb[8] = {27,'I',0,0,0,0,0,0}; /* top blanks = reverse linefeed */
+    EXTERN char cinit[20] = {27,'w',27,'e',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	/* start up sequence */
+    EXTERN char cendit[20] = {27,'v',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	/* to end session */
+    EXTERN char cbotb[8] = {10,0,0,0,0,0,0,0};  /* bottom blank line sequence */
+    EXTERN char celin[8] = {27,'K',0,0,0,0,0,0};	    /* erase to end of line */
+    EXTERN char cescr[8] = {27,'J',0,0,0,0,0,0};	    /* erase to end of screen */
+    EXTERN char cclears[8]={27,'E',0,0,0,0,0,0};	/* clear screen, home cusor */
+    EXTERN char cdelchr[8]={27,'M',0,0,0,0,0,0};	/* delete char on screen */
+    EXTERN char ccsrcm[8] = {0,'y','4',0,0,0,0,0};	/* set cursor to command mode */
+    EXTERN char ccsrin[8] = {0,'x','4',0,0,0,0,0};	/* set cursor to insert mode */
+    EXTERN char ciline[8] = {27,'L',0,0,0,0,0,0};	    /* insert a line */
+    EXTERN char ckline[8] = {27,'M',0,0,0,0,0,0};	    /* kill a line */
+    EXTERN char cundlb[8] = {27,'p',0,0,0,0,0,0};	/* turn on underline */
+    EXTERN char cundle[8] = {27,'q',0,0,0,0,0,0};	/* turn off underline */
+    EXTERN char cboldb[8] = {27,'p',0,0,0,0,0,0};	/* start bold */
+    EXTERN char cbolde[8] = {27,'q',0,0,0,0,0,0};	/* end bold */
+
+    EXTERN int dsp_mem = 0;
+    EXTERN int ddline = 16;
+    EXTERN int dscrl = 0;
+    EXTERN int dxcase = 0;
+#ifdef USECTRLZ
+    EXTERN int usecz = 1;
+#else
+    EXTERN int usecz = 0;
+#endif
+    EXTERN int autoin = 0;	/* TRUE if auto indent, FALSE otherwise */
+    EXTERN int logdef = 0;	/* backup log file by default 0->no, 1-> yes */
+    EXTERN char delkey = 8;
+    EXTERN int tvlins = 25;	/* number of lines on screen */
+    EXTERN int tvcols = 80;	/* number of columns on screen */
+    EXTERN int tvhardlines = 25;	/* real number of lines */
+    EXTERN int tvx = 0;        /* current x cursor position */
+    EXTERN int tvy = 0;        /* current y cursor position */
+    EXTERN int tvdlin = 0;     /* the "active" display line */
+    EXTERN int dsplin = 0;     /* the default display line */
+    EXTERN int tabspc = 8;     /* spacing for tabs */
+    EXTERN int leftmg = 0;	/* left margin of display */
+    EXTERN int wraplm = 0;	/* auto wrap? */
+    EXTERN int isibmpc = 0;	/* for possible use with a general version */
+#endif
+/* ********************************************************************** */
+/* ********************************************************************** */
+#ifdef H19
+    EXTERN int addx = 31;		/* amount to add to get x */
+    EXTERN int addy = 31;			/* to get y */
+    EXTERN char cxychr = 0;		/* true if convert xy bin to ascii */
+    EXTERN char cversn[12] = "H19";     /* a version to identify config */
+    EXTERN char cxy1st = 'l';			/* l if line first, c if column 1st */
+    EXTERN char cxybeg[8] = {27,'Y',0,0,0,0,0,0};	/* start xy control seq  */
+    EXTERN char cxymid[8] = {0,0,0,0,0,0,0,0};  /* middle xy control seq */
+    EXTERN char cxyend[8] = {0,0,0,0,0,0,0,0};  /* end sequence */
+    EXTERN char cerrbg[8] = {27,'p',0,0,0,0,0,0}; /* string to print when errors start */
+    EXTERN char cerred[8] = {27,'q',0,0,0,0,0,0};  /* when errors done */
+    EXTERN char ctopb[8] = {27,'I',0,0,0,0,0,0}; /* top blanks = reverse linefeed */
+    EXTERN char cinit[20] = {27,'w',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	/* start up sequence */
+    EXTERN char cendit[20] = {27,'v',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	/* to end session */
+    EXTERN char cbotb[8] = {10,0,0,0,0,0,0,0};  /* bottom blank line sequence */
+    EXTERN char celin[8] = {27,'K',0,0,0,0,0,0};	    /* erase to end of line */
+    EXTERN char cescr[8] = {27,'J',0,0,0,0,0,0};	    /* erase to end of screen */
+    EXTERN char cclears[8]={27,'E',0,0,0,0,0,0};	/* clear screen, home cusor */
+    EXTERN char cdelchr[8]={27,'M',0,0,0,0,0,0};	/* delete char on screen */
+    EXTERN char ccsrcm[8] = {27,'y','4',0,0,0,0,0};	/* set cursor to command mode */
+    EXTERN char ccsrin[8] = {27,'x','4',0,0,0,0,0};	/* set cursor to insert mode */
+    EXTERN char ciline[8] = {27,'L',0,0,0,0,0,0};	    /* insert a line */
+    EXTERN char ckline[8] = {27,'M',0,0,0,0,0,0};	    /* kill a line */
+    EXTERN char cundlb[8] = {27,'p',0,0,0,0,0,0};	/* turn on underline */
+    EXTERN char cundle[8] = {27,'q',0,0,0,0,0,0};	/* turn off underline */
+    EXTERN char cboldb[8] = {27,'p',0,0,0,0,0,0};	/* start bold */
+    EXTERN char cbolde[8] = {27,'q',0,0,0,0,0,0};	/* end bold */
+
+    EXTERN int dsp_mem = 0;
+    EXTERN int ddline = 16;
+    EXTERN int dscrl = 0;
+    EXTERN int dxcase = 0;
+#ifdef USECTRLZ
+    EXTERN int usecz = 1;
+#else
+    EXTERN int usecz = 0;
+#endif
+    EXTERN int autoin = 0;	/* TRUE if auto indent, FALSE otherwise */
+    EXTERN int logdef = 0;	/* backup log file by default 0->no, 1-> yes */
+    EXTERN char delkey = 8;
+    EXTERN int tvlins = 24;	/* number of lines on screen */
+    EXTERN int tvcols = 80;	/* number of columns on screen */
+    EXTERN int tvhardlines = 24;	/* real number of lines */
+    EXTERN int tvx = 0;        /* current x cursor position */
+    EXTERN int tvy = 0;        /* current y cursor position */
+    EXTERN int tvdlin = 0;     /* the "active" display line */
+    EXTERN int dsplin = 0;     /* the default display line */
+    EXTERN int tabspc = 8;     /* spacing for tabs */
+    EXTERN int leftmg = 0;	/* left margin of display */
+    EXTERN int wraplm = 0;	/* auto wrap? */
+    EXTERN int isibmpc = 0;	/* for possible use with a general version */
+#endif
+/* ********************************************************************** */
+#ifdef HP2621
+    EXTERN int addx = -1;		/* amount to add to get x */
+    EXTERN int addy = -1;			/* to get y */
+    EXTERN char cxychr = 1;		/* true if convert xy bin to ascii */
+    EXTERN char cversn[12] = "HP2621x";     /* a version to identify config */
+    EXTERN char cxy1st = 'l';			/* l if line first, c if column 1st */
+    EXTERN char cxybeg[8] = {27,'&','a',0,0,0,0,0};	/* start xy control seq  */
+    EXTERN char cxymid[8] = {'y',0,0,0,0,0,0,0};  /* middle xy control seq */
+    EXTERN char cxyend[8] = {'C',0,0,0,0,0,0,0};  /* end sequence */
+    EXTERN char cerrbg[8] = {7,0,0,0,0,0,0,0}; /* string to print when errors start */
+    EXTERN char cerred[8] = {0,0,0,0,0,0,0,0};  /* when errors done */
+    EXTERN char ctopb[8] = {27,'L',0,0,0,0,0,0}; /* top blanks = reverse linefeed */
+    EXTERN char cinit[20] = {27,'&','j','@',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	/* start up sequence */
+    EXTERN char cendit[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	/* to end session */
+    EXTERN char cbotb[8] = {10,0,0,0,0,0,0,0};  /* bottom blank line sequence */
+    EXTERN char celin[8] = {27,'K',0,0,0,0,0,0};	    /* erase to end of line */
+    EXTERN char cescr[8] = {27,'J',0,0,0,0,0,0};	    /* erase to end of screen */
+    EXTERN char cclears[8]={27,'H',27,'J',0,0,0,0};	/* clear screen, home cusor */
+    EXTERN char cdelchr[8]={27,'P',0,0,0,0,0,0};	/* delete char on screen */
+    EXTERN char ccsrcm[8] = {27,'&','j','@',0,0,0,0};	/* set cursor to command mode */
+    EXTERN char ccsrin[8] = {27,'&','j','B',0,0,0,0};	/* set cursor to insert mode */
+    EXTERN char ciline[8] = {27,'L',0,0,0,0,0,0};	    /* insert a line */
+    EXTERN char ckline[8] = {27,'M',0,0,0,0,0,0};	    /* kill a line */
+    EXTERN char cundlb[8] = {0,'p',0,0,0,0,0,0};	/* turn on underline */
+    EXTERN char cundle[8] = {0,'q',0,0,0,0,0,0};	/* turn off underline */
+    EXTERN char cboldb[8] = {0,'p',0,0,0,0,0,0};	/* start bold */
+    EXTERN char cbolde[8] = {0,'q',0,0,0,0,0,0};	/* end bold */
+
+    EXTERN int dsp_mem = 1;
+    EXTERN int ddline = 12;
+    EXTERN int dscrl = 6;
+    EXTERN int dxcase = 0;
+#ifdef USECTRLZ
+    EXTERN int usecz = 1;
+#else
+    EXTERN int usecz = 0;
+#endif
+    EXTERN int autoin = 0;	/* TRUE if auto indent, FALSE otherwise */
+    EXTERN int logdef = 0;	/* backup log file by default 0->no, 1-> yes */
+    EXTERN char delkey = 8;
+    EXTERN int tvlins = 24;	/* number of lines on screen */
+    EXTERN int tvcols = 79;	/* number of columns on screen */
+    EXTERN int tvhardlines = 24;	/* real number of lines */
+    EXTERN int tvx = 0;        /* current x cursor position */
+    EXTERN int tvy = 0;        /* current y cursor position */
+    EXTERN int tvdlin = 0;     /* the "active" display line */
+    EXTERN int dsplin = 0;     /* the default display line */
+    EXTERN int tabspc = 8;     /* spacing for tabs */
+    EXTERN int leftmg = 0;	/* left margin of display */
+    EXTERN int wraplm = 0;	/* auto wrap? */
+    EXTERN int isibmpc = 0;	/* for possible use with a general version */
+#endif
+/* ********************************************************************** */

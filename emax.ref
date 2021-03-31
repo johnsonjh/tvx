@@ -1,0 +1,96 @@
+	            EMAX - TVX emulating emacs
+
+     Important differences:  No windows, no marked region, no Q registers,
+no word delete/case change, ^K interacts differently with save buffer
+multiple keyboard macros (called repeat loops), much different file
+and buffer manipulation.
+
+     Partial line ^K's (no argument or 0 argument) will save the deleted
+text in the unkill buffer (^CU), but NOT the save/cut buffer.  If an
+argument is supplied, then the killed lines are save in the save buffer.
+
+     TVX'x kill last thing concept is implemented as ^C^K.
+
+     Values can be supplied in two ways.  Any of the <esc> commands
+may supply a count after the <esc>.  Thus, '<esc>10B' will back over
+10 words.  <esc> may also be used to specify the count for ctrl
+commands:  '<esc>10^N' goes down 10 lines.  The usual emacs '^U'
+also works to supply arguments.  It works in the emacs multiples
+of 4, but the Arg: count echoes differently.  When you press ^U,
+then the message 'Arg: 4' will appear on the bottom.  If you press
+^U again, it will change to 'Arg: 16'.  However, if you enter
+any other numeric value, the 'Arg' message disappears, and you
+get no additional prompting of values.
+     
+
+ <ctrl-A>    Move to start of line.
+n<ctrl-B>    (Back) Move backward by characters.
+n<ctrl-C>    (Command) TVX Command: execute extended commands provided
+             by TVX base.  (Warning: these ^C commands have NO relation
+             to ^C commands provided by large emacs implemetations!)
+         ^A    Append line to save buffer
+         ^B    Move to absolute beginning of file
+         ^E    Edit repeat buffer
+         ^F    Fill n lines to autowrap margin
+         ^G    No op - exit ^C
+         ^H    Half screen down
+         ^J    Jump back to previous location
+         ^K    Delete last thing
+	 ^N    Move to beginning of next line
+	 ^M    Mark location n
+         ^P    Move to beginning of previous line
+         ^R    Restore edited repeat buffer
+         ^W    Write buffer, read next portion of file
+          ;    Search forward again
+          ~    Change case of next n characters
+	  G    Goto line number n
+          H    Half page up
+	  I    Insert ascii char n if n supplied,
+                 otherwise enter insert mode
+          L    Print screen on printer (micros only)
+          M    Return to marked location
+          P    Put line into save buffer
+          S    Search forward across file buffers
+          U    Unkill last single line killed
+          Vp   Set variable p (like TVX's : command)
+          W    Write save buffer to external file
+          Y    Yank external file into save buffer
+n<ctrl-D>    (Delete) Delete next character.
+ <ctrl-E>    (End) Move to end of line.
+n<ctrl-F>    (Forward) Move forward by characters.
+n<ctrl-H>    Backspace - delete n previous characters
+n<ctrl-K>    (Kill) With no argument, kill from current position
+             to end of line; if at the end, kill the newline.
+             With argument 0, kill from beginning of line to current
+             position. Otherwise, kill argument lines forward
+             (if positive) or backward (if negative).
+ <ctrl-L>    Redraw the screen.
+n<ctrl-N>    (Next) Move to next line.
+n<ctrl-O>    (Open) Open line abover cursor.
+n<ctrl-P>    (Previous) Move to previous line.
+ <ctrl-R>    (Reverse) search backward.
+ <ctrl-S>    (Search) search forward. { <Esc>S is a synomymn }
+ <ctrl-T>    (Transpose) Transpose characters.
+ <ctrl-U>    Specify an argument, as described above.
+n<ctrl-V>    Move forward by n pages.
+
+ <ctrl-X><ctrl-C>  Prompt, and exit unconditionally if 'Y' given.
+ <ctrl-X><ctrl-B>  Short buffer status line
+n<ctrl-X>E   (Execute) Execute current repeat loop n times.
+
+ <ctrl-Y>    (Yank) Yank save buffer to current location.
+ <ctrl-Z>    Save current buffer to associated file and exit.
+n<Del>       Delete the previous n characters. (^H is synonymn)
+
+ <esc>%      Invoke command file (TVX @ file)
+ <esc>!      Call operating system
+n<esc>#p     Execute repeat loop 'p' 'n' times.
+n<esc>(      Begin a repeat definition.  ')<esc><esc>' ends loop.
+ <esc>-,0-9  Auto arugument for other <esc> and CTRL commands.
+ <esc><      Move to beginning of buffer.
+ <esc>>      Move to end of buffer.
+ <esc>?      Help and status screens
+n<esc>B      (Back) Move backward by words.
+n<esc>F      (Forward) Move forward by words.
+n<esc>V      Move backward by pages.
+

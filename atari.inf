@@ -1,0 +1,250 @@
+#------------------------- ATARI SPECIAL FILES -------------------------
+    This file contains some extra files needed to compile and use
+TVX on the Atari 520st.  These files are included in this one file.
+You will have to split it apart yourself.  The files assume you have
+the developers kit, and include:
+
+	HIRES.S - the assembly source of the 25/50 line screen interface
+        RES25PRG.S - assembly source of PROGRAM to change to 25 lines
+	RES50PRG.S - assembly source of PROGRAM to change to 50 lines
+		{ Just assemble and link/relmod these, no libraries needed }
+		These are needed because TVX allows you to switch to a 50
+		line display ('(' command), but doesn't force it back to
+		25 when it exits (maybe you want to stay in 50!).  Having
+		the programs allows you to switch back to 25 outside of
+		TVX.
+	STDIOTVX.H - fixed up version of stdio.h to avoid portab.h problems.
+	CTVX.BAT - Batch file to compile all modules of TVX. Assumes
+		the compiler is in A:, TVX source in B:, and the
+		batch file run from B: (e.g. {B}a:batch ctvx).
+		(If you build VIX or EMAX, you only need to recompile
+		 the TVX_EDIT and TVX_LEX modules, after changing the ifdefs)
+		Be patient, it takes over an hour to compile on floppies.
+	LINKTVX.BAT - file to link tvx.  Assumes .o's on B:, run from a:.
+
+#-------------------- cut here, save as HIRES.S -------------------------
+*  Make hi rez screen bios handle 25 lines of 8x16 characters
+*
+		.text
+		.globl _rez25
+LINEA_I		equ	$A000 
+GET_REZ		equ	4		; extended bios resolution inquiry
+_rez25: 
+	link	R14,#-4			; set up
+	move.w	#GET_REZ,-(sp)		; get screen resolution
+	trap	#14 
+	addq.w	#2,sp
+	cmp.w	#2,d0			; only execute if already in hi rez
+	bne	ex25f 
+	dc.w	LINEA_I			; get the important pointers 
+	move.l	08(a1),a1		; a1 -> 8x16 font header 
+	move.l	72(a1),-$0A(a0)		; v_off_ad <- 8x16 offset table ad
+	move.l	76(a1),-$16(a0)		; v_fnt_ad <- 8x16 font data addr 
+	move.w	#0016,-$2E(a0)		; v_cel_ht <- 16  8x16 cell heigh
+	move.w	#0024,-$2A(a0)		; v_cel_my <- 24  maximum cell "Y" 
+	move.w	#1280,-$28(a0)		; v_cel_wr <- 1280  vertical byte offset
+	move	#1,R0			; true return
+	bra	ex25
+ex25f:
+	move	#0,R0			; false return
+ex25:	unlk	R14			; prepare for return
+	rts
+*
+*  Make hi rez screen bios handle 50 lines of 8x8 characters
+*
+		.globl _rez50
+_rez50: 
+	link	R14,#-4			; set up
+	move.w	#GET_REZ,-(sp)		; get screen resolution
+	trap	#14 
+	addq.w	#2,sp
+	cmp.w	#2,d0			; only execute if already in hi rez
+	bne	ex50f 
+	dc.w	LINEA_I			; get the important pointers 
+	move.l	04(a1),a1		; a1 -> 8x8 font header 
+	move.l	72(a1),-$0A(a0)		; v_off_ad <- 8x8 offset table ad
+	move.l	76(a1),-$16(a0)		; v_fnt_ad <- 8x8 font data addr 
+	move.w	#008,-$2E(a0)		; v_cel_ht <- 8  8x8 cell heigh
+	move.w	#0049,-$2A(a0)		; v_cel_my <- 49  maximum cell "Y" 
+	move.w	#640,-$28(a0)		; v_cel_wr <- 640  vertical byte offset
+	move	#1,R0			; true return
+	bra	ex50
+ex50f:
+	move	#0,R0			; false return
+ex50:	unlk	R14			; prepare for return
+	rts
+	.data
+	end 
+#-------------------- cut here, save as RES25PRG.S -------------------------
+*
+*  Make hi rez screen bios handle 25 lines of 8x16 characters
+*
+*  Simply as68 this, then link it, no libraries needed
+		.text
+		.globl _hi25
+LINEA_I		equ     $A000 
+GET_REZ		equ     4       	; extended bios resolution inquiry
+_hi25: 
+	lea     stack,sp 
+	move.w  #GET_REZ,-(sp)  	; get screen resolution
+	trap    #14 
+	addq.w  #2,sp
+	cmp.w   #2,d0           	; only execute if already in hi rez
+	bne     exit 
+	dc.w    LINEA_I      	; get the important pointers 
+	move.l  08(a1),a1       	; a1 -> 8x16 font header 
+	move.l  72(a1),-$0A(a0) 	; v_off_ad <- 8x16 offset table ad
+	move.l  76(a1),-$16(a0) 	; v_fnt_ad <- 8x16 font data addr 
+	move.w  #0016,-$2E(a0)  	; v_cel_ht <- 16    8x16 cell heigh
+	move.w  #0024,-$2A(a0)  	; v_cel_my <- 24    maximum cell "Y" 
+	move.w  #1280,-$28(a0)  	; v_cel_wr <- 1280  vertical byte offset
+exit:   clr.w   -(sp)           	; back to the os 
+	trap    #1 
+	ds.l    $10
+stack:  ds.l    $01             	; hey chef, gimme a short stack
+	end 
+#-------------------- cut here, save as RES50PRG.S -------------------------
+*
+*  Make hi rez screen bios handle 25 lines of 8x16 characters
+*
+*  Simply as68 this, then link it, no libraries needed
+*
+		.text
+		.globl _hi50
+LINEA_I		equ     $A000 
+GET_REZ		equ     4       	; extended bios resolution inquiry
+_hi50: 
+	lea     stack,sp 
+	move.w  #GET_REZ,-(sp)  	; get screen resolution
+	trap    #14 
+	addq.w  #2,sp
+	cmp.w   #2,d0           	; only execute if already in hi rez
+	bne     exit 
+	dc.w    LINEA_I      	; get the important pointers 
+	move.l  04(a1),a1       	; a1 -> 8x8 font header 
+	move.l  72(a1),-$0A(a0) 	; v_off_ad <- 8x8 offset table ad
+	move.l  76(a1),-$16(a0) 	; v_fnt_ad <- 8x8 font data addr 
+	move.w  #008,-$2E(a0)		; v_cel_ht <- 8    8x8 cell heigh
+	move.w  #0049,-$2A(a0)  	; v_cel_my <- 49    maximum cell "Y" 
+	move.w  #640,-$28(a0)		; v_cel_wr <- 640  vertical byte offset
+exit:   clr.w   -(sp)           	; back to the os 
+	trap    #1 
+	ds.l    $10
+stack:  ds.l    $01             	; hey chef, gimme a short stack
+	end 
+#-------------------- cut here, save as STDIOTVX.H -------------------------
+/* stdio.h fixed to make it compatible with the rest of the world */
+
+#define mc68k 0
+
+#define TRUE 1
+#define FALSE 0
+
+#define	NULL	0
+#define NULLPTR (char *) 0
+#define	EOF	(-1)
+
+#define BUFSIZ	512
+#define MAXFILES	16
+struct _iobuf {	
+	int _fd;
+	int _flag;
+	char *_base;
+	char *_ptr;
+	int _cnt;
+};
+
+#ifndef FILE
+extern struct _iobuf _iob[MAXFILES];
+#define FILE struct _iobuf
+#endif
+#define NULLFILE ((FILE *)0)
+
+#define _IOREAD	0x01
+#define _IOWRT	0x02
+#define _IOABUF	0x04
+#define _IONBUF	0x08
+#define _IOERR	0x10
+#define _IOEOF	0x20
+#define _IOLBUF 0x40
+#define _IOSTRI	0x80
+#define _IOASCI	0x100
+
+#define stdin  (&_iob[0])
+#define stdout (&_iob[1])
+#define stderr (&_iob[2])
+
+#define clearerr(p) ((p)->_flag &= ~_IOERR)
+#define feof(p) ((p)->_flag & _IOEOF)
+#define ferror(p) ((p)->_flag & _IOERR)
+#define fileno(p) ((p)->_fd)
+#define getchar() getc(stdin)
+#define putchar(c) putc(c,stdout)
+#define putc fputc
+#define getc fgetc
+
+
+#define	abs(x)	((x) < 0 ? -(x) : (x))
+
+#define MAX(x,y)   (((x) > (y)) ? (x) :  (y))
+#define	MIN(x,y)   (((x) < (y)) ? (x) :  (y))
+#define max(x,y)   (((x) > (y)) ? (x) :  (y))
+#define	min(x,y)   (((x) < (y)) ? (x) :  (y))
+
+/*************************** end of stdio.h *********************************/
+#-------------------- cut here, save as CTVX.BAT -------------------------
+a:as68 -l -u -s a: b:hires.s
+a:cp68 -p -I A: tvx_1.c tvx_1.i
+a:c068 tvx_1.i tvx_1.1 tvx_1.2 tvx_1.3 -f
+a:rm tvx_1.i
+a:c168 tvx_1.1 tvx_1.2 tvx1.s
+a:rm tvx_1.1
+a:rm tvx_1.2
+a:as68 -l -u -s a: b:tvx1.s
+a:rm b:tvx1.s
+a:cp68 -p -I A: tvx_2.c tvx_2.i
+a:c068 tvx_2.i tvx_2.1 tvx_2.2 tvx_2.3 -f
+a:rm tvx_2.i
+a:c168 tvx_2.1 tvx_2.2 tvx2.s
+a:rm tvx_2.1
+a:rm tvx_2.2
+a:as68 -l -u -s a: b:tvx2.s
+a:rm b:tvx2.s
+a:cp68 -p -I A: tvx_io.c tvx_io.i
+a:c068 tvx_io.i tvx_io.1 tvx_io.2 tvx_io.3 -f
+a:rm tvx_io.i
+a:c168 tvx_io.1 tvx_io.2 tvxio.s
+a:rm tvx_io.1
+a:rm tvx_io.2
+a:as68 -l -u -s a: b:tvxio.s
+a:rm b:tvxio.s
+a:cp68 -p -I A: tvx_lib.c tvx_lib.i
+a:c068 tvx_lib.i tvx_lib.1 tvx_lib.2 tvx_lib.3 -f
+a:rm tvx_lib.i
+a:c168 tvx_lib.1 tvx_lib.2 tvxlib.s
+a:rm tvx_lib.1
+a:rm tvx_lib.2
+a:as68 -l -u -s a: b:tvxlib.s
+a:rm b:tvxlib.s
+a:cp68 -p -I A: tvx_edit.c tvx_edit.i
+a:c068 tvx_edit.i tvx_edit.1 tvx_edit.2 tvx_edit.3 -f
+a:rm tvx_edit.i
+a:c168 tvx_edit.1 tvx_edit.2 tvxedit.s
+a:rm tvx_edit.1
+a:rm tvx_edit.2
+a:as68 -l -u -s a: b:tvxedit.s
+a:rm b:tvxedit.s
+a:cp68 -p -I A: tvx_lex.c tvx_lex.i
+a:c068 tvx_lex.i tvx_lex.1 tvx_lex.2 tvx_lex.3 -f
+a:rm tvx_lex.i
+a:c168 tvx_lex.1 tvx_lex.2 tvxlex.s
+a:rm tvx_lex.1
+a:rm tvx_lex.2
+a:as68 -l -u -s a: b:tvxlex.s
+a:rm b:tvxlex.s
+#-------------------- cut here, save as LINKTVX.BAT -------------------------
+link68 [u] B:tvx.68k=gems,b:tvx1,b:tvx2,b:tvxedit,b:tvxlex,b:tvxio,b:tvxlib,b:hires,osbind,gemlib
+relmod b:tvx
+rm b:tvx.68K
+#-------------------- END OF ATARI SPECIAL FILES -------------------------
+

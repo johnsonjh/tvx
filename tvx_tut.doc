@@ -1,0 +1,409 @@
+
+
+        ****************************************************************
+        *                                                              *
+        *                 TVX Interactive Introductions                *
+        *                                                              *
+        ****************************************************************
+ 
+                                  **** 1 ****
+ 
+     This is a demonstration of the capabilities of TVX.  Commands to TVX
+consist of single key mnemonic commands.  TVX is what is known as a two mode
+editor - command mode and insert mode.  TVX is normally in command mode, and
+keystrokes are interpreted as commands like 'up', 'down', 'find', etc.  When
+you enter an 'i' for insert, TVX enters insert mode which allows you to enter
+text into the file.  For this lesson, you will be requested to enter commands.
+Each command key you are to enter will be enclosed in 'single quotes'.  Thus, a
+request to enter 'd' means that you should simply hit the 'd' key on the
+keyboard.  Each time you hit the 'd' key, the blinking cursor will move down
+one line.  NOW, hit the 'd' key repeatedly until '**** 2 ****' and part 2 of
+this demo shows on the screen.  (You will have to hit the 'd' key around 20
+times.) Do that NOW. 
+ 
+ 
+ 
+ 
+ 
+ 
+                                  **** 2 ****
+     Welcome to part two of the lesson.  Continue to hit the 'd' key until the
+'**** 2 ****' is at the very top of the screen. 
+     TVX was written by Dr. Bruce Wampler, and has been released to the public
+domain.  It has versions running on CP/M-80, the IBM-PC, generic MS-DOS, the
+Atari 520ST, and several versions of Unix.  If you read the instructions and
+enter the commands when requested, you should get a good demonstration of the
+power of TVX.  This lesson is organized into several sections.  Each section
+will start with a line in the form '**** 1 ****'. 
+     Most of the commands to TVX have been chosen to be mnemonic - thus it is
+'d' for down, 'u' for up, 'l' for left, and 'r' for right.  Pressing any of
+those four keys now will allow you to move the cursor around the screen.  The
+'d' and 'u' commands will move the cursor to the beginning of the next or
+previous lines. 
+ 
+NOW, hit the four cursor movement keys needed and position the blinking cursor
+at the beginning of this line.  Whenever we get to a new section, use the 'd'
+command to get the '**** n ****' at the top of the screen. 
+     TVX is easy to use.  Already, you can move around the file and see what is
+going on.  This demo file is actually a text file, just like one you might edit
+using TVX.  There are other commands to move the cursor around.  The 'p' (page)
+command moves down 25 lines at a time, which is a new screenful.  Right now,
+the cursor should still the line indicated above.  If you NOW hit 'p', part 3
+will show up. 
+ 
+....  end of part 2 .... 
+ 
+ 
+ 
+ 
+ 
+                                  **** 3 ****
+     Welcome to section 3. As before, repeatedly hit the 'p' key to position
+the **** 3 **** at the top of the screen. 
+     We will now be entering some other TVX commands.  When you are requested
+to enter a command, the entire sequence will be enclosed in double quotes:
+"cmds".  Remember that commands are mnemonic - one key will enter one command
+to the editor.  Sometimes entering a command will cause the screen to be
+updated, or a message to be printed at the bottom.  Usually, that is normal.  A
+major benefit of a screen editor is "what you see is what you get". 
+     Most of the commands to TVX take optional count arguments.  To enter a
+count to a command, you enter the count using the digit keys on the top row of
+the keyboard, followed by the command key.  Thus, entering the sequence "10d"
+would cause the cursor to go down 10 lines.  Counts may be negative, too.  If
+you entered "-1p" (or, equivalently, "-p"), the cursor would move UP one
+screenful of text.  This convention for entering counts holds true for all TVX
+commands that take count arguments.  You may want to try using 'p' or "10d" or
+other count instead of repeatedly hitting the 'd' key alone to move around this
+lesson. 
+     As you use more and more TVX commands, it will be useful to have the quick
+reference chart on hand.  Don't enter any other commands before requested.
+This lesson is not foolproof, either.  If you try to get out of sequence of the
+lesson, then you will likely get lost. 
+(*** Important note for users with limited RAM.  This entire lesson may not fit
+into memory at once!  When you get to the point that no more text will scroll
+up from the bottom, you must hit '^W'.  Pressing both the 'Ctrl' and the 'w'
+keys at the same time will cause the next part of the lesson to be read in.)
+NOW, hit 'd' (or a 'p') until **** 4 **** is at the screen top. 
+ 
+....  end of part 3 .... 
+ 
+ 
+ 
+ 
+ 
+                                  **** 4 ****
+     We will now actually edit some text.  NOTE: This IS a scratch file, so
+don't worry about changing it.  The 'k' (for kill a character) command can be
+used to delete a single character at a time.  By hitting the 'k' key once, the
+character the cursor is positioned on will be deleted.  A "5k" would delete the
+next 5 characters.  NOW, use the four cursor motion commands to position the
+cursor on the following sharp: #. We will delete this text.  After the cursor
+is on the #, repeatedly hit the 'k' key and delete only the sentence
+immediately following the #.
+     We will continue with simple editing of text.  If at any time, the text is
+off the bottom of the screen, use the 'd' down key to move down and scroll the
+new text onto the screen as needed. 
+     The backspace key may be used to delete one character at a time before the
+cursor.  NOW, position the cursor over the '0' in the following string:
+1234567890abcd.  NOW, use the backspace key to delete the digits before the
+'0'.  If you had used 'k' instead, the characters AFTER the '0' would have been
+deleted.  That's all there is to deleting text. 
+     Suppose you want to delete an entire line.  The '^k' key (pressing the
+'Ctrl' key and the 'k' key at the same time, from now on, '^x' means Control-X)
+will delete the entire line that the cursor is currently positioned on.  NOW,
+position the cursor anywhere on the next line. 
+---- We will delete this entire line ----
+NOW, with the cursor on the previous line, when you hit '^k', it will be
+deleted.  Of course, you can use a count argument and delete several lines,
+forwards or backwards.  Remember that counts are entered using the by entering
+a count before the command key.  NOW, position the cursor on the next line. 
+We will now delete 5 lines.  NOW, enter the command sequence "5^k". 
+This is line 2 to be killed. 
+Line 3
+Line 4
+Line 5
+ 
+     Those 5 lines should now be gone. 
+ 
+     What if you accidentally kill a line?  You can get it back! 
+NOW, position the cursor on this line and hit '^k'. 
+It's gone.  NOW, before you enter any other commands, press '^g' (for get
+back).  That line is back!  This works only for the last killed line, however.
+If you had entered "5^k", then only the last line would have been recovered.
+The last line killed will be saved until another line is killed. 
+     Two other useful commands are available for deleting text.  You may want
+to delete the rest of a given line, or you may want to delete the first part of
+the line.  NOW, position the cursor over the c on the next line:
+1234567890abcdef
+If you now hit '"' key (double quote), the part of the line from the 'c'
+onwards will be deleted.  Now move the cursor back to the '0'on that line.  To
+delete the first part of the line, use ''' (single quote).  You should now have
+'0ab' on that line, since the ''' does not include the character the cursor is
+on.  The '^G' unkill command works for ''' and '"', just like '^k'. 
+     NOW, move the cursor down and get part 5 (**** 5 ****) to the top of the
+screen.  You can use 'p' or 'd'. 
+ 
+....  end of part 4 .... 
+ 
+ 
+ 
+                                  **** 5 ****
+     We will now insert some text.  To insert text, you first position the
+cursor to the place you want to insert the text.  Then enter the 'i' (for
+insert) to enter insert mode, then enter the text you want to insert using the
+regular keyboard keys.  Notice that the message '### Insert Mode ###' appears
+on the bottom of the screen.  On some versions, the shape of the cursor will
+change, too.  As you type, the text you enter will appear on the screen in
+front of the cursor: "what you see is what you get".  As you continue, all
+characters that you type will continue to be inserted.  When you are done
+inserting text, press the 'Esc' key.  You will now be back in command mode. 
+     NOW, let's try to insert something.  How about your name.  Position the
+cursor over the period (.) on the next line:
+My name is: .
+NOW, press 'i' to enter insert mode, then type your name, and finally press
+'Esc' to return to command mode.  That is all there is to inserting text.  TVX
+is a line oriented editor, which is most useful for entering programs.  You
+press the 'Return' key to end a line and begin a new one. 
+     Sometimes you may want to insert a block of text in the middle of a line,
+or before some existing text.  You can simply enter the text, but the constant
+shifting of text to the right can be visually unpleasant.  The 'o' (open)
+command will open a new line for inserting text.  Try it. 
+     The next section covers the find pattern command will show you how to
+search for text and find the section or line of the file you want to edit. 
+ 
+....  end of part 5 .... 
+ 
+ 
+ 
+ 
+                                  **** 6 ****
+     It is often useful to be able to find a particular word or pattern in the
+text file.  The TVX find command may be used for this.  To start the find
+command, you first press the 'f' (find) key.  This will cause the message
+"Find?" to be printed on the bottom of the screen.  You then enter the pattern
+you want to find.  The pattern is terminated with an [Esc].  If the pattern is
+found, the screen will be updated, and the cursor placed after the pattern.  If
+the pattern is not found, the cursor is not changed and "Not found" will be
+printed on the bottom.  When entering the pattern, you may use the backspace
+key to edit your input.  Each time you hit the backspace key, one character is
+deleted. 
+     NOW, let's search for the pattern "replace".  To do this, first hit the
+'f' command, followed by "replace[Esc]".  The cursor will now be placed after
+the next occurrence of "replace".  If you had supplied a count of -1 (or -)
+before the 'f', then the search would have been for the first previous
+occurrence of "replace". 
+     If you now hit the ';' (find again) key, the next occurrence of the last
+pattern you found, here "replace", will be found.  TVX always remembers the
+last pattern you found, and the ';' command will search again. 
+     Speaking of replace, TVX makes it easy to find a pattern and then either
+delete that string or replace it with a new string.  If you hit the '/' (delete
+last) key immediately after finding a pattern, that pattern will be deleted.
+Try another ';' to find 'replace' again, and then hit '/'.  If you want to then
+replace the text, you can use the '=' command.  It is just like entering "/i". 
+     Normally, the find pattern command ignores upper and lower case.  You can
+search for the exact case, however.  You may also search for arbitrary
+patterns.  See the user's manual for details. 
+ 
+ 
+....  end of part 6 .... 
+ 
+ 
+ 
+ 
+                                  **** 7 ****
+     This section covers more cursor movement commands.  So far, we have only
+used the four cursor motion keys and the 'p' commands.  Two commands let you
+skip over a word at a time.  These are the 'TAB' and '{' (or '[') commands.
+Thus, the 'TAB' key will skip over the next word to the right.  The '{' skips
+over words backwards.  Try using those two commands to see how they work. 
+     The '.' (period, usually the same key as '>') command will move the cursor
+to the end of the current line.  The ',' (comma, on the same key as '<')
+command moves the cursor to the beginning of the line.  Experiment with those
+two commands. 
+     You may have noticed that the 'u' and 'd' commands always move the cursor
+to the beginning of the line.  Two commands will move the cursor vertically,
+but keep it in the same column.  The '^d' key moves down in the same column,
+and the '^u' command moves up in the same column.  Try using 'u', 'd', '^u',
+and '^d' to see the difference in their operation. 
+     The 'p' command moves up and down (with a - count) a screenful.  The 'h'
+command keys will move the cursor a half screenful at a time. 
+     You also can get to the very beginning or the very end of the file.  These
+commands are 'b' (begin) and 'e' (end).  Whenever you enter a command that
+moves the cursor a long ways, TVX remembers where you came from.  Immediately
+after entering a command that changes the cursor location, you can use the 'j'
+(jump back) command to return the cursor to the previous location.  For
+example, if you enter 'b' followed by a 'j', you will move to the beginning,
+then jump back to here.  The 'j' is most useful after the begin and end
+commands, as well as after a 'f' find command. 
+ 
+ 
+....  end of part 7 .... 
+ 
+ 
+ 
+ 
+ 
+ 
+                                  **** 8 ****
+     We will now cover some of the more advanced features of TVX, such as
+moving blocks of text and entering editing macros.  TVX can be used to easily
+move text around a file.  First, lets move a copy of the following three lines
+down a ways.  Use 'd' to place the cursor at the beginning of the following
+three lines. 
+Saved line 1 Saved line 2 Saved line 3
+NOW, hit the 's' (for save) command three times (or "3s").  Note that the
+cursor moved down three lines and is now positioned over the NOW.  We will make
+a copy of those lines below here.  Place the cursor over the # on the next
+line. 
+# The saved text will get copied above this line
+If you now hit the 'g' (get) command, a copy of the three saved lines will get
+inserted right before the # line.  These commands are called 'Save line' and
+'Get back saved text'. 
+     Remember the '/' delete pattern command used on 'f' find?  That command
+really is "delete last thing", where the last "thing" can be a find pattern as
+before, or the text just saved in the save buffer, or the text just gotten from
+the save buffer.  Now we can easily move several lines of text.  Save the
+following two lines by positioning the cursor at the beginning of the first and
+then hitting 's' twice. 
+Move this line 1 Move this line 2
+Now the cursor will be at the beginning of this line.  If you now hit the '/'
+key, those two lines will be deleted.  Move them to the following line by
+positioning the cursor and hitting the 'g' to get them back. 
+Move them to in front of this line. 
+     Each time you hit the 's' key, another line is saved in the save buffer.
+If you don't enter any other commands between consecutive 's' commands (or 's'
+with counts) continue to add text to the save buffer.  The first 's' command
+entered following any other command will first clear whatever text might
+already be in the save buffer. 
+     If you want to save a few lines from one part of the file, then a few more
+from a different place, you can use the 'a' append command.  Append is very
+much like the save command except that it always adds on to the end of the save
+buffer and will not clear it if there are other commands between. 
+     A few more words about the '/' delete last thing command.  So far you have
+seen how '/' works with the 'find' and 'save' commands.  It also works right
+after a 'g' get command, so if you get text to the wrong place, you simply need
+to hit '/' to delete it again.  '/' also works right after the 'TAB' and '{'
+commands, which makes it easy to delete words.  If you entered "5[TAB]"
+followed by a '/', the cursor would skip over 5 words and then those 5 words
+would be deleted.  You may try that here if you wish to see it work. 
+ 
+ 
+ 
+....  end of part 8 .... 
+ 
+ 
+ 
+                                  **** 9 ****
+     This section demonstrates the use of the repeat buffer.  The repeat buffer
+allows you to enter one or several commands and cause them to be repeatedly
+executed.  For example, suppose you wanted to change the next 3 occurrences of
+'abc' to 'wxyz'.  Using the 'f' find and '/' delete last (or even '=' delete
+last and insert) commands to do this manually can be time consuming.  It would
+be difficult to do this if there were 100 changes to make.  The repeat loop
+solves this problem.  To do the example one time, you might enter the
+following: "fabc[Esc]=wxyz[Esc]".  (Note that [Esc] means the Escape key, and
+will be echoed on the bottom of the screen as a '$'.) We will now do this three
+times.  FIRST, position at the beginning of the next line. 
+The cursor should be at the beginning of this line.  Now, enter a '3' followed
+by the '<' (begin loop) key.  That will cause the message "repeat: 3<" to be
+printed on the bottom line.  Now, enter the above command:
+"fabc[Esc]=wxyz[Esc]".  That is the body of the repeat loop.  To change the
+next 3 abc's (abc), now terminate the loop by entering ">[Esc][Esc]".  The '>'
+(upper case comma key) closes the loop, and the double [Esc] is necessary to
+terminate the loop.  Note that the [Esc] echoes as '$'.  Now, the next three
+occurrences of abc will have been changed to 'wxyz'.  If there had been less
+than three occurrences of 'abc', then the loop would have terminated early with
+an error message.  You may use the backspace key to edit your input to the
+repeat command, just as with find. 
+     Now suppose you want to change the next 'abc' into 'wxyz'.  TVX remembers
+the loop you just entered.  (Actually, there are 3 to 9 different repeat loops
+which can be displayed by entering the '?' help command.) Now, to change one
+more 'abc', press the '&' key.  The 'Rpt agn' command will cause the loop to be
+re-executed count times. 
+     These repeats can get quite complex.  This can be a danger, but is a
+powerful tool.  Any of the 3 to 9 repeat loop buffers can be selected and used
+to hold TVX command macros.  The Reference Manual explains how to use the
+multiple repeat buffers.  By doing nothing, however, you still get the one
+default repeat loop with no extra worry or action on your part. 
+ 
+ 
+ 
+....  end of part 9 .... 
+ 
+ 
+ 
+ 
+ 
+                                 **** 10 ****
+     There is one command that you may find useful occasionally (at least on
+single user systems such as an IBM-PC): screen print.  The '^p' command will
+cause the current screen to be sent to the printer (if there is one!).  By
+consecutively hitting '^p', 'p', ..., you can print as much of your file as you
+wish.  You can try that now if you have a printer and it is ready. 
+ 
+ 
+ 
+ 
+ 
+....  end of part 10 .... 
+ 
+ 
+ 
+ 
+ 
+                                 **** 11 ****
+     TVX has one other major feature that may occasionally be useful to you.
+You can read in an external file into the save buffer.  The 'g' get command can
+then be used to insert that text into the file you are editing.  To use this
+command, press '^y' (for yank).  You will be asked for the name of a file.
+That file will be read in.  If you now position the cursor and press 'g', the
+contents of that file will be placed in the current buffer. 
+     The opposite of '^y' is "-^y".  You can save a portion of the current file
+in another one.  Save the section you want to write in the save buffer using
+the 's' command, then enter "-^y".  You will be asked for the name of the file
+to write to.  The current contents of the save buffer will then be saved in
+that file. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+                                 **** 12 ****
+     TVX has several features that improve its interaction with nroff type text
+formatters.  (These formatters typically have formatting commands that begin
+with a period in column one of the line.) One is the auto-wrap feature.  With
+the feature, TVX will automatically wrap around when you pass a specified
+column when entering text.  To turn on auto-wrap, enter the command "70:w".
+The 70 means wrapping will occur when you enter the first space after column
+79.  The ':' is a general 'set' command used to set various parameters to TVX. 
+ 
+When you use auto-wrap, you will get source text with a generally even
+appearance.  However, as you edit text, you will find the
+lines getting uneven, just like this text. The "tidy" command can be
+used to even out these lines.  Move the cursor
+to the beginning of this text, and enter "8t". Each
+'t' will tidy one line.  Tidy works very much like a formatter's filling,
+and knows about dot commands.  It also won't tidy lines beginning
+with a blank or tab.
+ 
+ 
+ 
+ 
+ 
+                                **** last ****
+     TVX has several other features and commands.  These are described in
+detail in the TVX reference manual.  This lesson has tried to give examples of
+some of the more commonly used features of TVX. 
+     Feel free to experiment on this lesson file with all the commands provided
+by TVX.  The best way to learn about the operation of TVX is by using it.  You
+are on your own now.  When you are done, you can exit TVX with the '^X' exit
+command.  You should have a good idea of the philosophy of TVX now, and can
+read the user's manual with new insight. 
+ 
+ 
+Remember - '^x' to exit, 'b' for beginning, 'e' for end
+ 

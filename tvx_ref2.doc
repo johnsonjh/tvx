@@ -1,0 +1,1452 @@
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+                  *** USER CUSTOMIZATION of TVX ***
+ 
+     A program called TVX_CFG is also provided with most versions of
+Standard TVX.  It allows you to customize TVX to a great extent.  The
+program generates a file called CONFIG.TVX.  When TVX is started with
+a command line of the form: 'TVX filename -c=config.tvx", the values
+defined in CONFIG.TVX will be used instead of the defaults.  (Warning:
+TVX_CFG may not be implemented for all systems.  It does not work with
+the emulator versions of TVX.)
+ 
+     TVCONFIG is mostly self explanatory.  It allows you to change the
+following:
+ 
+1. Commands.  All of the approximately 50 commands can be redefined.
+There are some restrictions: all commands must be a single letter, and
+case is ignored.  The '@', ESCAPE, and '<>' commands cannot be
+changed.  Commands cannot be a number, including a '-'. 
+ 
+2. Synonyms.  You may define some synonyms, such as space for right,
+or RETURN for down.  You cannot duplicate previously defined
+commands. 
+ 
+3. Function Keys.  Up to 50 function keys may be defined to be
+equivalent to any command (in fact any letter or character).  When a
+function key is pressed, TVX will translate it to the character you
+specify.  If your function keys use an ESCAPE as a prefix character,
+you will have to redefine a function key to be ESCAPE! 
+ 
+4. Parameters.  You may change the default for any of the ':'
+parameters. 
+ 
+     After you have built a suitable working version of CONFIG.TVX,
+another program called TVX_PTCH has been provided to allow TVX.EXE (or
+TVX.COM) to be permanently patched with the options set by TVX_CFG.
+This means you won't have keep track of the CONFIG.TVX file any more,
+and won't need the '-c' switch. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+                                 -22-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+                        *** Error Messages ***
+ 
+*** Abort, are you sure? 
+     This message is displayed after the "abort" command has been
+entered.  A reply of y or Y will cause the session to be terminated. 
+ 
+*** Bad O= switch
+     An incorrect format was specified for the O= switch. 
+ 
+*** Bad @ name
+     An invalid file name was specified.  Re-enter. 
+ 
+*** Bad command: x
+     The command is not a valid TVX command. 
+ 
+*** Bad file name
+     An invalid file name was specified.  Re-enter. 
+ 
+*** Bad output file: filename
+     An invalid output file was specified. 
+ 
+*** Bad par (val | name)
+     An invalid value or parameter name was specified. 
+ 
+*** Bad rpt buff #
+     An invalid repeat loop number was entered. 
+ 
+*** Bad switch
+     An invalid switch was specified.  Re-enter file name and
+switches. 
+ 
+*** buffer empty
+     Information message.  Displayed after a new file has been
+created, or when the write buffer command is executed and the text
+buffer is empty. 
+ 
+*** Can't create new name
+     TVX was unable to create a new name for the output file.  Free
+some disk space, rename the file, try again. 
+ 
+*** Can't insert that
+     There are three values that TVX uses internally, and thus are not
+valid as user inserted characters in the text buffer. 
+ 
+*** Can't save last line twice! 
+     The last line of the buffer can only be saved once.  (That
+applies to the other lines, too, but the last line is a special case.)
+ 
+*** Can't :o, R/O
+     It makes no sense to set a new file name when the file is read
+only. 
+ 
+*** Can't, buffer empty.  Insert 1st
+     Most TVX commands are not valid until some text has been inserted
+into the buffer. 
+ 
+ 
+ 
+                                 -23-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+*** Can't: R/O
+     File beginning is illegal when the file is read only. 
+ 
+*** Compacting buffer
+     Information message.  Displayed when TVX is compacting the
+buffer.  The compaction process may take several seconds. 
+ 
+*** Compacting done
+     Information.  The compaction is complete. 
+ 
+*** Compactor lost: quit now! 
+     An internal error has been discovered.  Exit TVX immediately, and
+preserve the backup copy.  Try the session again. 
+ 
+*** Create?  (y/n)
+     The file name specified does not exist.  A y answer will cause
+the file to be created.  A n answer will allow the file name to be
+respecified. 
+ 
+*** Error reopening
+     Something has gone wrong with the 'File beginning' command.
+Exit, and try editing the file again.  Be careful since an empty file
+may have been created. 
+ 
+*** File only part read
+     There was not enough room in the save buffer to hold the entire
+external file specified in the 'merge' command.  Try re-editing using
+the 's' big buffer switch. 
+ 
+*** Line no longer there
+     Return to noted location can't work because the noted line has
+been deleted. 
+ 
+*** lines filled
+     TVX has run out of room to add more lines.  Use the 'write
+buffer' or 'file beginning' command to get more space for new lines. 
+ 
+*** no get room
+     There is not enough room in the text buffer to insert all the
+text in the save buffer.  Use the 'file begin' or 'write buffer'
+commands, and try again.  The '-^W' command is often useful. 
+ 
+*** no more lines for insert
+     See "lines filled". 
+ 
+*** no nesting
+     TVX does not allow nested repeat loops: "<<..>>". 
+ 
+*** no save room
+     There is not enough room left to save any more text in the save
+buffer.  Try saving smaller blocks, or use the 'file begin' command to
+get more space. 
+ 
+*** No more free lines for insert
+     The maximum number of lines have been used.  Write the buffer
+before inserting more new lines. 
+ 
+ 
+                                 -24-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+*** not found
+     The current find pattern was not found. 
+ 
+*** Not a valid rpt buff
+     The current line does not contain a valid repeat loop for the ^R
+restore command to use. 
+ 
+*** reading file... 
+     Displayed while TVX is reading in the file. 
+ 
+*** rename fails
+     Something has gone wrong with the 'File beginning' or 'quit'
+commands.  On timeshared systems, this may mean you didn't have write
+capability for the file.  The work file will probably be retained, and
+can be manually renamed or copied using standard operating system
+commands. 
+ 
+*** search fails
+     A cross-buffer search has failed to find pattern. 
+ 
+*** Save buffer empty! 
+     Tried to write to a file when save buffer empty. 
+ 
+*** Unable to open external file
+     An invalid name was specified. 
+ 
+*** Unable to open yank file
+     An invalid name was specified. 
+ 
+*** writing buffer
+     Displayed when the buffer is being written out. 
+ 
+*** writing partial buffer
+     Partial buffer only, as caused by the '-^W' command. 
+ 
+*** Yank filename:
+     Enter the name of the file you want to read into the save
+buffer. 
+ 
+*** 100 chars only
+     At most, 100 characters are allowed in each find pattern and each
+repeat loop. 
+ 
+*** <> not complete
+     The repeat loop has terminated before the specified number times
+have been executed.  This is usually what you wanted, and can be
+caused by failing to find a pattern, or reaching the end of the
+buffer.  An invalid command or other error will also cause a repeat
+loop to terminate. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+                                 -25-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+                           *** TTY MODE ***
+ 
+     Normally, TVX is uses as a full screen editor.  It will work on
+dumb crt terminals or on hard copy terminals, however.  The alternate
+mode of operation is called tty mode.  Tty mode is also useful for
+terminals hooked up with slow baud rates.  Almost all TVX commands are
+supported in tty mode.  The main difference is that the editor no
+longer operates in a what you see is what you get mode. 
+ 
+     When TVX is first started in tty mode (either by the -t command
+line switch, or using 1:t), it will display a 'tvx>' prompt.  The
+normal mnemonic commands are then entered on the input line.  The
+input line is terminated by a <return> (which is not sent as a
+command).  Each letter on the input line will be interpreted as a TVX
+command.  Thus, entering a line: 'dddr' would move the cursor 3 lines
+down and one character right.  The result of the commands will not be
+displayed however. 
+ 
+     The 'V' verify command operates specially for tty mode, and is
+used to type out lines of the file.  The normal procedure, then is to
+enter commands on the command input line, then enter appropriate 'V'
+commands to display relevant lines of the buffer. 
+ 
+     As long as normal TVX commands are entered, the command line
+prompt is 'tvx>', and the terminating <return> sends commands to TVX
+to execute.  In insert, find, and repeat, the prompt will change to
+'+'.  All text entered, including <return>'s is entered into the text,
+the find pattern, or the repeat loop buffer.  An Escape ends the
+command, and an additional <return> sends the line to TVX. 
+ 
+     Why is tty mode included in TVX?  The earliest versions of TVX
+had tty mode because there were a lot of TI Silent-700's around used
+at 300 baud.  No longer.  One reason is that tty mode provides an
+interface useful to visually handicapped users.  The other is that it
+is useful for certain things not possible in visual mode.  For
+example, suppose you wanted to see every line in a file containing a
+certain pattern.  Tty mode is useful for this.  Enter tty mode (1:t),
+then enter the following loop after the 'tvx>' prompt:
+     1000<fpattern$vd>$$
+This command will find the pattern, print the line, and go to the next
+line to search again.  Failure on the last find will exit the loop.
+There are no doubt other subtle tricks like this that tty mode can be
+used for. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+                                 -26-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+                     *** INSTALLATION OF TVX ***
+ 
+     If you have the C source code of TVX, this section has some notes
+you should find useful if you recompile the code to customize TVX for
+your system.  It should also be helpful if you are installing TVX on a
+new system.  If you are just a user, then you can ignore this
+section. 
+ 
+ 
+*** General Comments ***
+ 
+     TVX has been designed to be portable.  It has had versions
+running under CP/M-80, MS-DOS, GEMDOS, RT-11, RSX-11, VMS, and Unix
+BSD 4.2.  The heart of TVX portability is the terminal driver.  For
+dedicated systems, the control codes used by a specific terminal are
+hard wired into C global variables and a terminal specific version is
+compiled.  It has been customary to give a unique name to each
+different version such as TVV for a VT-52 version, TVT for a televideo
+version, etc.  The Unix 4.2 BSD version of TVX has been written to
+take advantage of the TERMCAP library usually provided, and is thus
+terminal independent. 
+ 
+     Since terminals differ widely, TVX tries to update the screen as
+best as possible using the control codes available.  The minimum set
+of control sequences required by TVX include direct x-y cursor
+positioning, and erase from cursor to the end of the current line.
+Almost all terminals have at least these two controls.  The only known
+terminal widely available that does not have both of these is the
+ADM-3a.  Thus, TVX will NOT work on ADM-3a's.  Another desirable
+control sequence is the ability to insert a blank line at the top of
+the screen (reverse scroll).  This allows TVX to scroll rather than
+jump from one screen to the next.  However, TVX will perform
+adequately even on terminals with only x-y and erase to end of line.
+It has also been found that TVX does not always work on terminals with
+multiple pages of screen data.  The scroll bottom line command usually
+fails. 
+ 
+*** Quick and Dirty Porting ***
+ 
+     It should be very simple to port TVX to a new machine for a
+pecific terminal.  The only "hard" part comes when trying to use a
+package like TERMCAP.  Then, the 4.2 Unix code can serve as a guide.
+In effect, what that code does is get the screen controls and patch
+the regular TVX screen control locations. 
+ 
+     Typically, however, it should be almost trivial (assuming a
+fairly standard C implementation - the current code compiles unchanged
+on 4 different C compilers) to generate a version of TVX for a
+specific terminal.  The main steps:
+ 
+     1. Define the control codes for the terminal.  These are
+explained in some detail in the manual. 
+ 
+     2. Fix file I/O calls.  This may take no changes at all.  The
+main issue has been the mode argument to fopen.  TVX likes to get the
+file raw - with NO end of line handling by the C I/O system.  These
+ 
+ 
+                                 -27-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+things are identified by #define's in tvx_defs.ic.  The other issue is
+what is the end of line character.  Unix likes LF only, while MS-DOS
+and descendants like CR/LF (actually DEC RT-11 descendants).  The
+#define FILELF and NEWLINE handle this. 
+ 
+     3. The last issue is getting characters to and from the
+terminal.  These are isolated in tvx_io.c.  The critical routines:
+ 
+     ttrd() [ and ttrd_() ]: This reads one character (ANY possible
+character, except possible ^S and ^Q) from the terminal, UNECHOED.
+The routine ttinit is called to possibly initialize things, and ttclos
+at the end to undo whatever ttinit did. 
+ 
+     ttwt() and ttwtln(): These are used to send characters to the
+screen.  ttwt sends a single character, immediately and unbuffered.
+ttwtln can be based on ttwt, but is provided and used whenever a chunk
+is available to write.  This is essential on busy time shared
+systems. 
+ 
+     That's really the only problem areas.  One good thing to do when
+porting is to find all the uses of #ifdef (and #ifndef) for the
+implementations described: MSDOS, UNIX, GEMDOS.  Those certainly
+identify the areas most likely to be different on your system. 
+ 
+     Note that the Microsoft C compiler for MS-DOS is slightly brain
+damaged - the arguments to rename in its library are backwards from
+the rest of the world. 
+ 
+ 
+*** Source Files Supplied ***
+ 
+     The following files are included in most distributions:
+ 
+  TVX_1.C  - main part of code (part 1)
+  TVX_2.C  - main part of code (part 2)
+             These two files are mostly os and terminal independent.
+  TVX_EDIT.C - The main heart of the command parser.  Isolated to
+               make generating new emulators easy.  When generating
+               a new emulator, only TVX_EDIT and TVX_LEX need to
+               be recompiled.
+  TVX_LEX.C - defaults, some os dependent stuff in here.  Major
+            changes in defaults can be fixed by recompiling this file.
+  TVX_IO.C - almost all I/O, including screen, confined to this file.
+  TVX_LIB.C - misc library routines needed by TVX.
+  TVX_IBM.C - IBM-PC specific code, specifically the screen driver
+              (TVX_IBM.ASM - hand optimized version of TVX_IBM.C)
+  TVX_UNIX.C - contains unix specific code, including termcap driver
+  TVX_DEFS.IC - #define's for version, os, terminal, defaults
+  TVX_GLBL.IC - global data structures
+  TVX_TERM.IC - definitions for various terminals and systems
+
+  TVX_CFG.C - used to build CONFIG.TVX file for -c switch
+  TVX_PTCH.C - MS-DOS versions only - used to permanently apply
+              config settings to TVX.EXE.
+
+  TVX_MAKE.BAT - MS-DOS Batch file to build TVX using cii c-86.
+ 
+ 
+                                 -28-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+  TVX_MAKE.UNX - Unix Makefile to make on unix.
+
+  TVX_REF.DOC - This file, preformatted for printing on a "standard"
+                printer - 80 columns by 66 lines.
+  TVX_TUT.DOC - A novice user tutorial for using Standard TVX.
+  xxx.ref -    a quick reference card for given version of TVX.
+ 
+ 
+*** Screen Driver and Control Sequences ***
+ 
+     The actual codes used by TVX to update the screen are global
+variables in the 'tvx_glbl.ic' file.  Using the '#ifdef EXTERN' trick
+described in that file, the screen variables (plus most other relevant
+global variables) are included as external references.  The actual
+definitions for a given terminal are included in a file called
+'tvx_term.ic'.  Several sample definitions are included in the
+distribution code.  A description of each relevant variable follows:
+ 
+ 
+** X-Y Cursor Addressing
+ 
+int addx - amount to add to internal x position get terminal's x
+value.  Terminals typically encode x-y as a single printable
+character, thus requiring the addition of a blank to make x-y
+printable.  Since TVX uses a 1,1 origin, this value will commonly be
+31. 
+ 
+int addy - same as addx, but for y position. 
+ 
+char cxychr - true (1) if convert xy binary representation to ascii
+string. 
+ 
+char cxy1st - 'l' if line coordinate first, 'c' if column first. 
+ 
+char cxybeg[8], char cxymid[8], char cxyend[8] - The x-y cursor
+control sequence usually takes one of two forms: <control><x><y> or
+<control><x><middle><y><end>.  The x and y may be reversed.  These
+three arrays are used to send the proper control sequence for xy
+positioning. 
+ 
+ 
+*** Other control sequences
+ 
+char cversn[12] - a version string to identify terminal. 
+ 
+char cerrbg[8], char cerred[8] - sequences sent when an error message
+sent to terminal's last line.  Note that cerrbe is sent BEFORE the
+cursor is moved to the last line, and cerred is sent before the cursor
+is returned to the original position.  Some terminals give problems if
+a highlight sequence is sent before a cursor positioning sequence.  A
+bell is usually safe for most versions. 
+ 
+char ctopb[8] - This sequence should insert a blank line when the
+cursor is at the top left corner.  It is often called reverse line
+feed.  A command to insert a line usually performs the same function,
+but some terminals don't have both. 
+ 
+ 
+                                 -29-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+char cinit[20], char cendit[20] - these sequences are sent to
+initialize and reset the terminal. 
+ 
+char cbotb[8] - this sequence scrolls the screen up one line when the
+cursor is on the last line.  Line feed works for any terminal
+encountered to date. 
+ 
+char celin[8] - Erase from cursor to end of line.  This sequence is
+required for operation of TVX. 
+ 
+char cescr[8] - Erase from cursor to end of screen.  If the terminal
+doesn't have this, it is simulated using multiple celins. 
+ 
+char ccsrcm[8], char ccsrin[8] - These are used to change the cursor
+from command mode to insert mode.  Many terminals do not support a
+method of changing the cursor shape.  These have been also been used
+to change the screen from normal to reverse video and back. 
+ 
+char ciline[8] - Insert a blank line.  A blank line is inserted on the
+line the cursor is on.  If available, it can be used for ctopb, too. 
+ 
+char ckline[8] - Kill a line.  The line the cursor is on is deleted,
+and the following text scrolled up. 
+ 
+char cundlb[8], cundle[8] - TVX has the capability to optionally
+support bold and underline for some text processors.  For example, a
+^U can be used to toggle underscore.  This is only useful for a text
+formatter that can recognize such a sequence. 
+ 
+char cboldb[8], char cbolde[8] - Similar to undlb, but boldface. 
+ 
+ 
+*** Default settings
+ 
+int ddline - default display line.  This sets which line is the
+default home display line.  For scrolling versions (dscrl != 0), right
+in the middle is a good place.  For fixed cursor line versions,
+something below the middle seems better (like 16 for 24 line
+screens). 
+ 
+int dscrl - default scroll lines.  If this is non-zero, the cursor
+will move up and down lines on the screen with cursor movement
+commands.  This requires a bit less screen update overhead, and is
+better for slower time shared systems.  If it is zero, the cursor will
+remain fixed on ddline, and text will scroll on and off the screen as
+needed.  Both these are resettable with the : command. 
+ 
+int dxcase - default search case.  0 means find is case insensitive, 1
+means find must match exact case. 
+ 
+int usecz - MS-DOS versions only.  If 1, TVX will put a Control-Z end
+of file mark in the file (this is CP/M compatible).  If 0, TVX uses
+MS-DOS end of file conventions. 
+ 
+int autoin - TRUE (1) if auto indent, FALSE (0) otherwise. 
+ 
+ 
+ 
+                                 -30-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+int logdef - Create backup log file by default?  0->no, 1-> yes. 
+ 
+char wildch - The character used as a wild card in finds. 
+ 
+char delkey - the delete character key, usually backspace. 
+ 
+int tvhardlines - number of physical lines on screen. 
+ 
+int tvlins - number of lines on virtual screen.  Initially should be
+same value as tvhardlines. 
+ 
+int tvcols - number of columns on screen.  If the terminal wraps new
+text to the next line rather than discarding characters after the last
+column, then tvcols must be set to 1 less than the true width of the
+terminal. 
+ 
+int isibmpc - TRUE (1) if this version uses the custom IBM-PC screen
+driver.  FALSE (0) if uses regular terminal output code. 
+ 
+char synofr[20], char synoto[20] - These are used to map commands.
+The synofr contains commands to be aliased to the corresponding
+command in the synoto table.  For example, the '[' and '{' keys are
+often reversed on some terminals.  Making '[' in synofr a synonym to
+'{' in synoto will make the two commands the same. 
+ 
+char funkey - If the terminal has function keys, they can be supported
+by TVX by setting this variable to the first code sent by the function
+key, usually ESCAPE.  TVX supports only two code sequences for
+function keys. 
+ 
+char funchar[50] - this is the second code sent by a function key. 
+ 
+char funcmd[50] - this is the equivalent command a given function key
+will be mapped to.  Similar to synofr and synoto. 
+ 
+ 
+*** #define options
+ 
+     The file 'tvx_defs.ic' has many #define statements that can be
+used to customize TVX for particular installations.  Ideally, the
+source for TVX should be maintained as one set, and differences
+between versions handled by #defines.  Most #defines are explained in
+the source code, but a few deserve a few extra comments, and are
+summarized below. 
+ 
+#define VERSION " - TVX (7/1/85) - " - This defines the version of
+TVX.  Any time a modification is made, the VERSION define should be
+updated. 
+ 
+#define VB - whether or not to create backup log version or not.  This
+does NOT imply the file "backup.log" will be used automatically (see
+variable logdef), simply that the code is included. 
+ 
+#define ULBD - If defined, TVX supports underline, bold in ^U, ^B
+format. 
+ 
+ 
+ 
+                                 -31-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+#define BACKUPNAME - This defines the name of the backup log file, if
+used. 
+ 
+#define BUFFLIMIT - This defines how much space is saved in the text
+buffer when reading in a file.  This determines how much space is
+reserved for saving text with the 'S' command, and how much is left
+over for new inserts.  Smaller values allow more text from the file to
+be read, larger values allow more text to be saved.  The '-s' switch
+at runtime increases this value. 
+ 
+#define FILEREAD, #define FILEWRITE - These define the string used for
+file mode in the fopen() calls.  Unix and MS-DOS versions are not
+typically exactly compatible, as most MS-DOS C's allow a different
+mode to handle the CR/LF problem. 
+ 
+#define FNAMESIZE - maximum length of file names. 
+ 
+#define INT16 - If #defined, then the normal C int is 16 bits long.
+This changes the way memory status is displayed. 
+ 
+#define LINELIMIT - Like BUFFLIMIT, only number of lines. 
+ 
+#define MAXBUFF - Defines maximum number of characters allocated to
+text buffer.  Malloc() is used to get the space from the runtime
+system.  It is possible less than MAXBUFF will be available.  The
+maximum allowed for any given system must be less than the maximum
+value represented by an unsigned int.  If MAXBUFF is very large, there
+get to be a noticeable initialization delay. 
+ 
+#define MAXLINE - This determines the maximum number of lines
+allocated per buffer.  It is related to MAXBUFF. 
+ 
+#define REPEATBUFS - defines how many repeat buffers are allocated.
+If space is a problem, allocate fewer repeat buffers. 
+ 
+#define USELF - This symbol should be defined if the terminal needs a
+line feed character after each carriage return.  Almost always true. 
+ 
+#define FILELF - This symbol is defined if text files use a CR/LF
+combination.  It causes a NEWLINE/LF to be written to files. 
+ 
+#define NEWLINE - This defines the actual character used as a new line
+in files.  On CR/LF systems, it should be a CR (13).  On systems like
+Unix with a single new line separator, it should be that character
+(LF). 
+ 
+#define USECTRLZ - defined if the code for handling a Control-Z and
+end of file mark should be used. 
+ 
+#define NEEDTVLIB - define this if the standard C library provided
+doesn't have the routine in TVX_LIB. 
+ 
+#define HELP - Define this if help should be supported.  The help
+routine uses significant space, which can be saved if help isn't
+compiled in. 
+ 
+ 
+ 
+                                 -32-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+#define CONFIGFILE - define this if support for the '-c' switch is
+desired. 
+ 
+ 
+ 
+**** MS-DOS Notes ***
+ 
+     TVX can be built as a generic MS-DOS version and as an IBM-PC
+specific version.  The MS-DOS version uses the standard DOS character
+output routines.  Thus, it could use the ANSI.SYS driver, but it would
+run very slowly then.  The IBM-PC version has a custom screen driver
+that calls the ROM BIOS directly, and is very fast.  Even more speed
+can be had by optimizing the output assembly code (the sysint
+overhead).  The definitions for and IBMPC included in "tvx_term.ic"
+also define the keypad keys to work in a predictable manner. 
+ 
+ 
+ 
+*** Unix Notes ***
+ 
+     The usual Unix version will be the TERMCAP version.  That version
+works very well, but is not in all cases optimal for a given
+terminal.  It might be desirable to build a specific version for the
+terminal you use most often.  Most notably, the TERMCAP version does
+not know about cursor shapes or other control sequences to distinguish
+command mode from insert mode.  Also, it sets tvcols to one less than
+the true value to avoid wrapping problems.  The termcap version also
+only sends a bell for the error message. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+                                 -33-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+                        *** TVX File Usage ***
+ 
+     TVX uses four logical files: the original file, the destination
+file, a work file, and the source file.  The original file and the
+destination file are not touched until a normal exit from TVX. 
+ 
+     The source file is the current copy of the file providing text to
+be entered.  When TVX is first started, the source file and the
+original file are the same.  The work file is used to hold the edited
+output file. 
+ 
+     When the '^B' file beginning command is issued, the remainder of
+the source input file is written to the work output file.  The work
+file then becomes the new source file, and a new work file is
+created.  Thus, it is possible to have four copies of a file around:
+The .BAK backup copy of the original file, the original copy of the
+file, the copy of the source file, and the (partially written) work
+file.  Under normal operation, there will only be two copies: the
+source file (which is really the original file) and the possibly
+partially written work file.  Only by using the '^B' commands can 3
+copies of the file exist. 
+ 
+     When you issue the normal '^X' exit command, the following
+actions take place: Any old .BAK files are deleted.  The original file
+is renamed to be the new .BAK version.  If the source file is
+different than the original file, it will be deleted.  The work file
+is then renamed to be the destination file.  If you don't have write
+access to the directory with the original file, then the original file
+and the work file will not be renamed.  A message to that effect will
+be printed.  The normal operating system copy and rename commands can
+be used to recover the work file, which contains the edits made to
+date. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+                                 -34-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+               *** Standard Quick Reference Summary ***
+ 
+ 
+       TVX Commands (n => count allowed)
+
+    nA Append lines            B Buffer beginning
+    ^B File beginning         nC Change chars
+    nD Down line             n^D Down column
+     E Buffer end            n^E Edit repeat buffer
+    nF Find pattern           ^F Find across buffs
+     G Get save buffer        ^G Unkill last line
+    nH Half page              nI Insert (till $)
+     J Jump back              nK Kill character
+   n^K Kill line              nL Left
+     M Memory status          nN Note location
+   n^N Reset location         nO Open blank line
+    ^O Operating system       nP Page
+    ^P Print screen           nR Right
+    ^R Restore edited buffer  nS Save lines
+    nT Tidy (fill text)       ^T Abort session
+    nU Up                    n^U Up column
+     V Verify                n^W Write buff
+    ^X Exit, end session     n^Y Yank to(-n)/from(+n) file
+   nBS Delete prev. char.     n; Find again
+     / Delete last thing       = Change last thing
+     ' Del to line beginning   " Delete to line end
+     , Line beginning          . Line end
+  nTAB Word right             n{ Word left
+  n<>$$ Repeat loop           n& Repeat again
+   n#k Execute repeat buffer k n times
+     ? Help                    @ Invoke cmd file
+     * Insert pat found last  n~ Toggle case
+     $ Escape - end insert, find, repeat
+   n:p Set parameter p
+
+  Possible parameters:
+
+    A - Autoindent (1=y,0=n)       D - display line
+    E - Expand tabs to n spaces    F - find case (0=exact,1=any)
+    M - Match wild cards           O - set output file name
+    S - scroll window              R - repeat buffer to use
+    T - tty mode                   U - define user wild card set
+    V - virtual window             W - autowrap width
+    C - cut mode
+
+  Usage: tvx filename [-b -i -l -o=f -r -s -t -w -# {-z -c=f}]
+
+    -[no]b : backup file           -[no]i : autoindent
+    -[no]l : make command log file -t : tty mode
+    -o=outputfile                  -r : read only
+    -s : big save buff             -[no]w : word processing mode
+    -# : set virtual window lines to #
+
+  On MS-DOS versions:
+    -[no]z : use control-z for end of file
+    -c=configfile                  -c : use /bin/config.tvx
+ 
+ 
+                                 -35-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+                 VIX - A vi-like editor based on TVX
+ 
+ 
+     Vix is an extension to tvx that provides a close emulation of the
+Unix editor vi.  While the majority of the common commands are
+identical, there are some inherent differences in the way tvx and vi
+treat text.  Most of the commands were implemented directly using the
+TVX equivalent, although some commands were required new code.  If the
+vi command could not be implemented, its command letter was left
+unused, and will produce an error message. 
+ 
+     Vix does not have the underlying ex editor, so none of the escape
+to ex commands work.  Vix does have the TVX repeat loop, however, and
+this compensates to a great extent for the need for ex features.
+Please consult the TVX manual for examples of using the repeat loop.
+Note that when using the repeat loop with vix, the commands will be
+vix commands and not tvx commands. 
+ 
+     Another significant difference is that tvx (and thus vix) treats
+the end of line character as just another character.  Thus cursor
+movement commands move over the end of line in a fashion one would
+expect.  However, when one moves to the end of the line, the cursor is
+placed 'over' the newline (displayed after the last real character in
+the line).  This makes the '$' command work somewhat differently.
+This also means that you can include a <return> in a search pattern.
+Vix and tvx use ESCAPE to end the search pattern instead of <return>. 
+ 
+     Vi uses the ':' command to read and write the file (among other
+things).  Vix uses the ':' to set operating parameters such as
+autoindent, screen size, etc.  The 'ZZ' (or 'ZA' to abort without
+changes) command is used by vix to exit. 
+ 
+     Unlike vi and ex, tvx and vix try to load the entire file being
+edited into memory (called the buffer by tvx/vix, as opposed to the
+yank or save buffer).  If the entire file doesn't fit, the user must
+manually 'page' the file in and out of memory manually.  Most of the
+'q' ("tvx" prefix) commands are supplied to handle buffer
+manipulation.  For more details, consult the TVX manual.  TVX/vix also
+uses the concept of the "last thing" as a major editing tool.
+Whenever you find a pattern, skip over a word with b or w, save text
+into the save buffer with the 'y' or 'Y' commands, or put text from
+the save buffer, that text is considered the "last thing".  The 'c/'
+and 'd/' commands will delete the last thing.  Entering a new command
+will forget what the last thing was until you again enter a "last
+thing" command. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+                                 -36-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+     The available vix commands are summarized below.  The first
+column of each entry has a character noting similarities and
+differences with the real vi commands in the following fashion:
+
+- means present in vi, not implemented in vix.
+= means commands work identically {with possible minor variations}
++ means new or significantly different command
+* means "equivalent" command, somewhat different than vi
+<space> means command unused in both vi and vix.
+
+  n in front of command means command takes count argument
+  [synonyms indicated in brackets]
+
+   ^@: Unused
+   ^A: Unused
+= n^B: Backward window. {2 lines of continuity not preserved}
+   ^C: Unused
+= n^D: Down half window.
+-  ^E: Not implemented
+= n^F: Forward window.
+*  ^G: memory status, short info line
+= n^H: backspace Command mode: left; Insert mode: del last char
+=  ^I: inserts tab in insert mode, not a command.
+= n^J: down arrow in column [j,^N]
++ n^K: up in column [k,^P]
+=  ^L: verify screen [^R,z]
+= n^M: down to beginning of line [+]
+= n^N: [j, ^J]
+   ^O: Unused
+= n^P: [k, ^K]
+=  ^Q: Unused (flow control)
+=  ^R: Redraw screen [^L,z]
+=  ^S: Unused (flow control)
++  ^T: TVX prefix command - see q [q,Q,T]
+* n^U: Up half window.  ** in insert mode, does NOT erase line **
+*  ^V: Not a command.  NOT literal quote in insert mode.
+*  ^W: Not a command.  NOT used for delete word in insert.
+   ^X: Unused
+-  ^Y: Not implemented
+-  ^Z: Not implemented
+=  Escape: forces command mode, safe follow char for d,c,q.
+   ^: Unused
+-  ^]: Not implemented
+-  ^^: Not implemented
+   ^_: Unused
+=  <space>:  [r]
++  n!: Tidy.  Fills n lines up to wrap margin. [see autowrap]
+-   ": Not implemented
++ n#p: execute repeat loop number 'p' 'n' times
+=   $: goto end of current line {end is newline, not last char}
+-   %: Not implemented
+-   &: Not implemented
+-   ': Not implemented
+-   (: Not implemented
+-   ): Not implemented
++   *: insert last matched pattern into text buffer
+ 
+ 
+                                 -37-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+=  n+: [CR, ^M]
+-   ,: Not implemented
+*   -: Used in vix for negative counts, use K for up line.
+-   .: Not implemented, repeat loops are a substitute
+=   /: search {Escape used to end pattern, multi-line patterns ok}
+*   0: 0 is used for counts (especially for : parameters)
+= 0-9: count value for numeric arguments {may be negative!}
+-   :: Not implemented - use ZZ and ZA to exit
+-   ;: Not implemented
++  n<: Begin repeat loop. Loop terminated with >$$. ($ = Esc)
++   =: Help screens
++   >: Used to terminate repeat loops.
+=   ?: Reverse search {search begins on previous line}
++  n@: execute current repeat loop n times (shorthand for n#p)
+=   A: append to end of line
+*  nB: back a word {vix's concept of words is different than vi}
+=   C: changes rest of line
+=   D: delete rest of the line
+-   E: Not implemented
+-   F: Not implemented
+=  nG: goes to line number n, or end of buffer if no n supplied
+*   H: Beginning of buffer (first line in buffer)
+=   I: inserts at beginning of line
+=   J: join lines {not needed since vix treats newlines as chars}
++  nK: Up a line to beginning of line
+*   L: bottom line of file
++  nM: return to marked location n (n from 1 to 9, see m)
+=   N: like n, but in reverse direction
+=  nO: open a line above current line. n opens n blank lines.
+=   P: put save buffer above current line {save buffers not named}
++   T: tvx commands (see q) [^T,q,Q]
+*   U: very limited undo!! It only restores the LAST line killed!
+    V: Unused
+*  nW: Moves forward n words [w] {vix's concept of words not same}
+=  nX: delete n characters before cursor
++  nY: append n lines to save buffer (see y), does not change buffer
+=+ Zx: exit from vix (ZZ: normal, writes file, ZA: abort, no changes)
+-  [[: Not implemented
+    : Unused
+-  ]]: Not implemented
+=   ^: beginning of line {1st char of line, NOT 1st non-white char}
++   _: invoke indirect command file
+=   a: append text starting after cursor
+*   b: back up a word [see B]
+=   c: change c, <sp>, ^, $, or / (delete, enter insert mode)
+    =   c - change line
+    =   <sp> - change one character
+    =   ^ - to beginning of line
+    =   $ - to end of line
+    -   w, b, and any others not mentioned not implemented
+    +   / - the last thing found, yanked or put
+=  nd: delete d, <sp>, ^, $, or /
+    =   d - delete line
+    =   <sp> - delete character
+    =   ^ - to beginning of line
+    =   $ - to end of line
+ 
+ 
+                                 -38-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+    -   w, b, and any others not mentioned not implemented
+    +   / - the last thing found, yanked or put
+-   e: Not implemented
+-   f: Not implemented
+    g: Unused
+=  nh: Move left n characters [BS,^H] {will move over lines, too}
+=  ni: insert (if value n supplied, then that ascii code inserted)
+=  nj: down lines, in column [^J,^N]
+=  nk: Up lines, in column [^K,^P]
+=  nl: right n characters [<space>] {moves over lines, too}
+*  nm: mark cur. line as location n.  Use M to return to location.
+=   n: find next (in same direction as last ? or /)
+=  no: open n following lines
+=   p: put save buffer after cur line
++   q: Prefix character for "tvx" extended commands
+        !: call operating system
+        b: goto real beginning of the file
+        e: edit repeat buffer
+        j: jump back to last location
+        p: put external file from save buffer
+        r: restore repeat buffer
+        s: print screen
+        w: read in next page of file
+        y: yank external file to save buffer
+        /: cross buffer search
+      n:p: set parameter 'p' to value 'n', parameters are:
+         a: autoindent (1 means on, 0 off for all "switch" pars)
+         c: "cut" mode (means 'dd' saves line in yank buffer, too)
+         e: expand tabs to n spaces (8 default)
+         d: home display line (where cursor homes after verify)
+         f: find case mode (0 is case insensitive, 1 exact match)
+         m: match wildcards (1 use ^A, ^L, etc., 0 no wild cards)
+         o: requests new name for output file
+         s: scroll window, cursor moves s lines before scrolling
+         t: tty mode - 1: tty mode, 0: visual mode
+         u: requests entry of user wild card set
+         v: virtual window size
+         w: autowrap limit.
+=   r: replace next char with next character entered
+=  ns: substitute: delete n characters, enter insert mode
+-   t: Not implemented
+-   u: Not implemented (see U)
+    v: Unused
+*  nw: advance word (see W)
+=  nx: delete n characters
+*  ny: yank text to save buffer - will save n lines into save buffer
+       (Only one save buffer, 1st y clears buffer, rest add until
+        non y command entered. dd works in a similar fashion, but
+        kills as it saves (if cut_mode enabled)).
+=   z: refresh screen (^L,^R)
+-   {: Not implemented
+-   |: Not implemented
+=  n~: Change case of next n characters
+* nDEL: Same as X, delete previous character
+ 
+ 
+ 
+ 
+                                 -39-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+                      EMAX - TVX emulating emacs
+ 
+     Important differences: No windows, no marked region, no Q
+registers, no word delete or case change, ^K interacts differently
+with save buffer multiple keyboard macros (called repeat loops), much
+different file and buffer manipulation. 
+ 
+     Partial line ^K's (no argument or 0 argument) will save the
+deleted text in the unkill buffer (^CU), but NOT the save/cut buffer.
+If an argument is supplied, then the killed lines are save in the save
+buffer. 
+ 
+     TVX'x kill last thing concept is implemented as ^C^K. 
+ 
+     Values can be supplied in two ways.  Any of the <esc> commands
+may supply a count after the <esc>.  Thus, '<esc>10B' will back over
+10 words.  <esc> may also be used to specify the count for ctrl
+commands: '<esc>10^N' goes down 10 lines.  The usual emacs '^U' also
+works to supply arguments.  It works in the emacs multiples of 4, but
+the Arg: count echoes differently.  When you press ^U, then the
+message 'Arg: 4' will appear on the bottom.  If you press ^U again, it
+will change to 'Arg: 16'.  However, if you enter any other numeric
+value, the 'Arg' message disappears, and you get no additional
+prompting of values. 
+ 
+
+ <ctrl-A>    Move to start of line.
+n<ctrl-B>    (Back) Move backward by characters.
+n<ctrl-C>    (Command) TVX Command: execute commands provided
+             by TVX base.  (These ^C commands have NO relation
+             to ^C commands of large emacs implemetations!)
+         ^A    Append line to save buffer
+         ^B    Move to absolute beginning of file
+         ^E    Edit repeat buffer
+         ^F    Fill n lines to autowrap margin
+         ^G    No op - exit ^C
+         ^H    Half screen down
+         ^J    Jump back to previous location
+         ^K    Delete last thing
+         ^N    Move to beginning of next line
+         ^M    Mark location n
+         ^P    Move to beginning of previous line
+         ^R    Restore edited repeat buffer
+         ^W    Write buffer, read next portion of file
+          ;    Search forward again
+          ~    Change case of next n characters
+          G    Goto line number n
+          H    Half page up
+          I    Insert ascii char n if n supplied,
+                 otherwise enter insert mode
+          L    Print screen on printer (micros only)
+          M    Return to marked location
+          P    Put line into save buffer
+          S    Search forward across file buffers
+          U    Unkill last single line killed
+          Vp   Set variable p (like TVX's : command)
+ 
+ 
+                                 -40-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+          W    Write save buffer to external file
+          Y    Yank external file into save buffer
+n<ctrl-D>    (Delete) Delete next character.
+ <ctrl-E>    (End) Move to end of line.
+n<ctrl-F>    (Forward) Move forward by characters.
+n<ctrl-H>    Backspace - delete n previous characters
+n<ctrl-K>    (Kill) With no argument, kill from current position
+             to end of line; if at the end, kill the newline.
+             With argument 0, kill from beginning of line to
+             current position. Otherwise, kill argument lines
+             forward (if positive) or backward (if negative).
+ <ctrl-L>    Redraw the screen.
+n<ctrl-N>    (Next) Move to next line.
+n<ctrl-O>    (Open) Open line above cursor.
+n<ctrl-P>    (Previous) Move to previous line.
+ <ctrl-R>    (Reverse) search backward.
+ <ctrl-S>    (Search) search forward. { <Esc>S is a synonym }
+ <ctrl-T>    (Transpose) Transpose characters.
+ <ctrl-U>    Specify an argument, as described above.
+n<ctrl-V>    Move forward by n pages.
+
+ <ctrl-X><ctrl-C>  Abort edit session with no changes.
+ <ctrl-X><ctrl-B>  Short buffer status line
+n<ctrl-X>E   (Execute) Execute current repeat loop n times.
+
+ <ctrl-Y>    (Yank) Yank save buffer to current location.
+ <ctrl-Z>    Save current buffer to associated file and exit.
+n<Del>       Delete the previous n characters. (^H is synonym)
+
+ <esc>%      Invoke command file (TVX @ file)
+ <esc>!      Call operating system
+n<esc>#p     Execute repeat loop 'p' 'n' times.
+n<esc>(      Repeat loop definition.  ')<esc><esc>' ends loop.
+ <esc>-,0-9  Auto argument for other <esc> and CTRL commands.
+ <esc><      Move to beginning of buffer.
+ <esc>>      Move to end of buffer.
+ <esc>?      Help and status screens
+n<esc>B      (Back) Move backward by words.
+n<esc>F      (Forward) Move forward by words.
+n<esc>V      Move backward by pages.
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+                                 -41-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+                            *** INDEX ***
+                         TVX Reference Manual
+ 
+abort - 12
+append - 6, 12
+auto wrap - 19
+autoindent - 17
+ 
+backspace - 1, 14, 20, 21
+backup file - 4, 6, 13, 20
+beginning of file - 6, 9
+buffer - 2, 6, 7, 9, 10, 12, 13
+buffer beginning - 6
+ 
+change - 7
+commands - 1, 6
+cursor - 1
+cursor character - 6
+cut mode - 18
+ 
+default source settings - 30
+define options - 31
+delete last thing - 15
+delete line front - 15
+delete line tail - 15
+delete previous character - 14
+down - 7, 12
+down in column - 7
+ 
+end buffer - 7
+end session - 14
+Error Messages - 23
+escape - 6, 8, 9, 20
+exit - 14
+external file - 14
+ 
+find - 8, 9, 14, 18
+find case - 18
+ 
+get - 9
+get killed line - 9
+ 
+half page - 9
+home display line - 18
+ 
+insert - 9, 11
+Insert find pattern - 15
+Installation - 27
+Installation - MS-DOS - 33
+Installation - Unix - 33
+invoke command file - 17
+ 
+jump - 10
+ 
+kill characters - 10
+kill lines - 10
+ 
+ 
+                                 -42-
+ 
+ 
+ 
+ 
+TVX Reference Manual                                           2/25/86
+ 
+ 
+left - 10
+line beginning - 15
+line end - 15
+log file - 4, 14, 17, 20
+ 
+memory - 10
+mode - 6, 7, 9, 11, 15
+ 
+note - 10, 11
+ 
+open line - 11
+operating system - 11
+other control sequences - 29
+output file - 18
+ 
+page - 9, 11
+parameters - 17
+print - 11
+ 
+Quick Reference Summary - 35
+quit - 7
+ 
+repeat buffer - 12
+repeat loop - 7, 16, 18
+right - 11
+ 
+save buffer - 6, 9, 12, 14
+scroll lines - 18
+search - 8
+skip over words - 16
+source code - 27
+starting up - 4
+status - 10
+switches - 5
+ 
+tab expansion - 18
+terminate - 12
+tidy - 12
+tty mode - 18, 26
+TVX File Usage - 34
+ 
+unkill - 9
+up - 13
+up in column - 13
+user wild cards - 19
+ 
+verify - 13
+virtual window - 19
+ 
+wild card - 8, 18
+word - 16
+write buffer - 13
+ 
+X-Y Cursor Addressing - 29
+ 
+yank external file - 14
+ 
+ 
+                                 -43-
+ 
+ 

@@ -1,0 +1,213 @@
+               VIX - A vi-like editor based on TVX
+
+	Vix is an extension to tvx that provides a close emulation
+of the Unix editor vi.  While the majority of the common commands
+are identical, there are some inherent differences in the way tvx
+and vi treat text.  Most of the commands were implemented directly
+using the TVX equivalent, although some commands were required new
+code.  If the vi command could not be implemented, its command letter
+was left unused, and will produce an error message.
+
+	Vix does not have the underlying ex editor, so none of the
+escape to ex commands work.  Vix does have the TVX repeat loop,
+however, and this compensates to a great extent for the need for ex
+features. Please consult the TVX manual for examples of using the
+repeat loop.  Note that when using the repeat loop with vix, the commands
+will be vix commands and not tvx commands.
+
+	Another significant difference is that tvx (and thus vix)
+treats the end of line character as just another character.  Thus
+cursor movement commands move over the end of line in a fashion one
+would expect.  However, when one moves to the end of the line, the
+cursor is placed 'over' the newline (displayed after the last real
+character in the line).  This makes the '$' command work somewhat
+differently. This also means that you can include a <return> in a
+search pattern. Vix and tvx use ESCAPE to end the search pattern
+instead of <return>.
+
+	Vi uses the ':' command to read and write the file (among
+other things).  Vix uses the ':' to set operating parameters such
+as autoindent, screen size, etc.  The 'ZZ' (or 'ZA' to abort without
+changes) command is used by vix to exit.
+
+	Unlike vi and ex, tvx and vix try to load the entire file
+being edited into memory (called the buffer by tvx/vix, as opposed
+to the yank or save buffer).  If the entire file doesn't fit, the
+user must manually 'page' the file in and out of memory manually. 
+Most of the 'q' ("tvx" prefix) commands are supplied to handle buffer
+manipulation.  For more details, consult the TVX manual.  TVX/vix
+also uses the concept of the "last thing" as a major editing tool.
+Whenever you find a pattern, skip over a word with b or w, save text
+into the save buffer with the 'y' or 'Y' commands, or put text from
+the save buffer, that text is considered the "last thing". The 'c/'
+and 'd/' commands will delete the last thing.  Entering a new command
+will forget what the last thing was until you again enter a "last
+thing" command.
+
+	The available vix commands are summarized below.  The first
+column of each entry has a character noting similarities and 
+differences with the real vi commands in the following fashion:
+
+- means present in vi, not implemented in vix.
+= means commands work identically {with possible minor variations}
++ means new or significantly different command
+* means "equivalent" command, somewhat different than vi
+<space> means command unused in both vi and vix.
+
+  n in front of command means command takes count argument
+  [synonyms indicated in brackets]
+
+   ^@: Unused
+   ^A: Unused
+= n^B: Backward window. {2 lines of continuity not preserved}
+   ^C: Unused
+= n^D: Down half window.
+-  ^E: Not implemented
+= n^F: Forward window.
+*  ^G: memory status, short info line
+= n^H: backspace Command mode: left; Insert mode: del last char
+=  ^I: inserts tab in insert mode, not a command.
+= n^J: down arrow in column [j,^N]
++ n^K: up in column [k,^P]
+=  ^L: verify screen [^R,z]
+= n^M: down to beginning of line [+]
+= n^N: [j, ^J]
+   ^O: Unused
+= n^P: [k, ^K]
+=  ^Q: Unused (flow control)
+=  ^R: Redraw screen [^L,z]
+=  ^S: Unused (flow control)
++  ^T: TVX prefix command - see q [q,Q,T]
+* n^U: Up half window.  ** in insert mode, does NOT erase line **
+*  ^V: Not a command.  NOT literal quote in insert mode.
+*  ^W: Not a command.  NOT used for delete word in insert.
+   ^X: Unused
+-  ^Y: Not implemented
+-  ^Z: Not implemented
+=  Escape: forces command mode, safe follow char for d,c,q.
+   ^\: Unused
+-  ^]: Not implemented
+-  ^^: Not implemented
+   ^_: Unused
+=  <space>:  [r]
++  n!: Tidy.  Fills n lines up to wrap margin. [see autowrap]
+-   ": Not implemented
++ n#p: execute repeat loop number 'p' 'n' times
+=   $: goto end of current line {end is newline, not last char}
+-   %: Not implemented
+-   &: Not implemented
+-   ': Not implemented
+-   (: Not implemented
+-   ): Not implemented
++   *: insert last matched pattern into text buffer
+=  n+: [CR, ^M]
+-   ,: Not implemented
+*   -: Used in vix for negative counts, use K for up line.
+-   .: Not implemented, repeat loops are a substitute
+=   /: search {Escape used to end pattern, multi-line patterns ok}
+*   0: 0 is used for counts (especially for : parameters)
+= 0-9: count value for numeric arguments {may be negative!}
+-   :: Not implemented - use ZZ and ZA to exit
+-   ;: Not implemented
++  n<: Begin repeat loop. Loop terminated with >$$. ($ = Esc)
++   =: Help screens
++   >: Used to terminate repeat loops.
+=   ?: Reverse search {search begins on previous line}
++  n@: execute current repeat loop n times (shorthand for n#p)
+=   A: append to end of line
+*  nB: back a word {vix's concept of words is different than vi}
+=   C: changes rest of line
+=   D: delete rest of the line
+-   E: Not implemented
+-   F: Not implemented
+=  nG: goes to line number n, or end of buffer if no n supplied
+*   H: Beginning of buffer (first line in buffer)
+=   I: inserts at beginning of line
+=   J: join lines {not needed since vix treats newlines as chars}
++  nK: Up a line to beginning of line
+*   L: bottom line of file
++  nM: return to marked location n (n from 1 to 9, see m)
+=   N: like n, but in reverse direction
+=  nO: open a line above current line. n opens n blank lines.
+=   P: put save buffer above current line {save buffers not named}
++   T: tvx commands (see q) [^T,q,Q]
+*   U: very limited undo!! It only restores the LAST line killed!
+    V: Unused
+*  nW: Moves forward n words [w] {vix's concept of words not same}
+=  nX: delete n characters before cursor
++  nY: append n lines to save buffer (see y), does not change buffer
+=+ Zx: exit from vix (ZZ: normal, writes file, ZA: abort, no changes)
+-  [[: Not implemented
+    \: Unused
+-  ]]: Not implemented
+=   ^: beginning of line {1st char of line, NOT 1st non-white char}
++   _: invoke indirect command file
+=   a: append text starting after cursor
+*   b: back up a word [see B]
+=   c: change c, <sp>, ^, $, or / (delete, enter insert mode)
+    =   c - change line
+    =   <sp> - change one character
+    =   ^ - to beginning of line
+    =   $ - to end of line
+    -   w, b, and any others not mentioned not implemented
+    +   / - the last thing found, yanked or put
+=  nd: delete d, <sp>, ^, $, or /
+    =   d - delete line
+    =   <sp> - delete character
+    =   ^ - to beginning of line
+    =   $ - to end of line
+    -   w, b, and any others not mentioned not implemented
+    +   / - the last thing found, yanked or put
+-   e: Not implemented
+-   f: Not implemented
+    g: Unused
+=  nh: Move left n characters [BS,^H] {will move over lines, too}
+=  ni: insert (if value n supplied, then that ascii code inserted)
+=  nj: down lines, in column [^J,^N]
+=  nk: Up lines, in column [^K,^P]
+=  nl: right n characters [<space>] {moves over lines, too}
+*  nm: mark cur. line as location n.  Use M to return to location.
+=   n: find next (in same direction as last ? or /)
+=  no: open n following lines
+=   p: put save buffer after cur line
++   q: Prefix character for "tvx" extended commands
+        !: call operating system
+        b: goto real beginning of the file
+        e: edit repeat buffer
+        j: jump back to last location
+        p: put external file from save buffer
+        r: restore repeat buffer
+        s: print screen
+        w: read in next page of file
+        y: yank external file to save buffer
+        /: cross buffer search
+      n:p: set parameter 'p' to value 'n', parameters are:
+         a: autoindent (1 means on, 0 off for all "switch" pars)
+         c: "cut" mode (means 'dd' saves line in yank buffer, too)
+         e: expand tabs to n spaces (8 default)
+         d: home display line (where cursor homes after verify)
+         f: find case mode (0 is case insensitive, 1 exact match)
+         m: match wildcards (1 use ^A, ^L, etc., 0 no wild cards)
+         o: requests new name for output file
+         s: scroll window, cursor moves s lines before scrolling
+         t: tty mode - 1: tty mode, 0: visual mode
+         u: requests entry of user wild card set
+         v: virtual window size
+         w: autowrap limit.
+=   r: replace next char with next character entered
+=  ns: substitute: delete n characters, enter insert mode
+-   t: Not implemented
+-   u: Not implemented (see U)
+    v: Unused
+*  nw: advance word (see W)
+=  nx: delete n characters
+*  ny: yank text to save buffer - will save n lines into save buffer
+       (Only one save buffer, 1st y clears buffer, rest add until
+	non y command entered. dd works in a similar fashion, but
+	kills as it saves (if cut_mode enabled)).
+=   z: refresh screen (^L,^R)
+-   {: Not implemented
+-   |: Not implemented
+=  n~: Change case of next n characters
+* nDEL: Same as X, delete previous character
+

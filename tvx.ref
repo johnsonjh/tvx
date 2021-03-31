@@ -1,0 +1,87 @@
+		*** TVX Quick Reference Summary ***
+
+  Usage: tvx filename [-b -i -l -o=f -r -s -t -w -# {-z -c=f}]
+
+    -[no]b : backup file           -[no]i : autoindent
+    -[no]l : make command log file -t : tty mode
+    -o=outputfile                  -r : read only
+    -s : big save buff             -[no]w : word processing mode
+    -# : set virtual window lines to #
+  On MS-DOS versions:
+    -[no]z : use control-z for end of file
+    -c=configfile                  -c : use /bin/config.tvx
+
+               TVX Commands (n => count allowed)
+
+    nA Append lines to save buffer (previous contents retained)
+     B Buffer beginning - move cursor to top of current buffer
+    ^B File beginning - move cursor to beginning of file
+    nC Change chars - delete n characters, enter insert mode
+    nD Down line - move cursor to beginning of next nth line
+   n^D Down column - move to same column in nth line down.
+     E Buffer end - move cursor to end of current buffer
+   n^E Insert repeat buffer n into current text for Editing
+    nF Find pattern - terminated with Escape - wild cards possible
+    ^F Find across buffs - searches across file buffers
+     G Get save buffer - insert contents of save buffer into text
+    ^G Unkill last line - get back the last single line killed
+    nH Half page - move cursor down (+n) or up (-n) half screen
+    nI Insert (till $) - If n supplied, then single char inserted
+     J Jump back to line cursor was on before previous command
+    nK Kill character - deletes starting at char cursor is over
+   n^K Kill line - deletes n lines
+    nL Left - move cursor n characters left
+     M Memory status - show basic status
+    nN Note current location, up to 9 different places remembered
+   n^N Reset location - return cursor to location n
+    nO Open blank line - new line in front of cursor
+    ^O Operating system - allows operating system commands
+    nP Page - move cursor up (-n) or down (+n) screenfuls
+    ^P Print screen - only on PCs
+    nR Right - move cursor right n characters
+    ^R Restore edited buffer - Used with ^E command
+    nS Save n consecutive lines in save buffer - deletes old contents
+    nT Tidy (fill text) - uses margin set by :w
+    ^T Abort session - edits are lost!
+    nU Up - move cursor up n lines to line beginning
+   n^U Up column - retains column
+     V Verify - repaints the screen
+   n^W Write buff, get next part of large file, -n writes to cursor
+    ^X Exit, end session - save edits
+   n^Y Yank to(-n)/from(+n) file - prompt for filename will follow
+   nBS Delete character before the cursor
+    n; Find again - re-uses last find pattern
+     / Delete "last thing" - following g, s, a, f, ^f commands
+     = Change "last thing" - like /, but enters insert mode
+     ' Delete to line beginning - deletes before cursor
+     " Delete to line end - cursor onward to end of line
+     , Line beginning - move cursor to beginning of line
+     . Line end - move to end of current line
+  nTAB Word right - move to begining of word to right
+    n{ Word left - left a word. n=0 move to beg of current word.
+ n<>$$ Repeat loop - execute commands between <>'s n times
+    n& Repeat again - execute current repeat buffer again
+   n#k Execute repeat buffer k n times
+     ? Help - gives a help screen
+     @ Invoke cmd file - execute file of TVX commands
+     * Insert pattern found last - leaves in command mode
+    n~ Toggle case - upper to lower, lower to upper
+     $ Escape - end insert, find, repeat
+   n:p Set parameter p -  Possible parameters:
+        A - Autoindent (1=y,0=n)     D - display line
+        E - Expand tabs to n spaces  F - find case (0=exact,1=any)
+        M - Match wild cards         O - set output file name
+        S - scroll window            R - repeat buffer to use
+        T - tty mode                 U - define user wild card set
+        V - virtual window           W - autowrap width
+        C - cut mode
+
+  Wild card matching - when wild card matching (:M) is enabled (default),
+  the following wild cards (control characters) are supported
+
+  ^A - alphanumeric character (a-z,0-9)   ^D - a digit (0-9)
+  ^L - any letter (a-z) ^O - Other - not ^A  ^P - Punctuation
+  ^X - any single character  ^U - a character from user set (:U to set)
+  Any of the above preceded by ^W matches a "word" of the wild card.
+  A ^N will match a "word" of characters NOT in the wild card set.
+

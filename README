@@ -1,0 +1,75 @@
+	TVX - A full screen editor in C
+
+===========================================================================
+**************************** RELEASE NOTES ********************************
+
+Version 3/6/86
+
+	* This is the second major release of TVX, distributed
+	  on mod.sources.  All files needed to build TVX for other
+	  systems are included on this distribution, also.
+
+	* The last section of the manual contains instructions for
+	  porting TVX to other environments.
+
+===========================================================================
+
+	Developed by:
+		Dr. Bruce E. Wampler
+		University of New Mexico
+		Department of Computer Science
+		Farris Engineering Center
+		Albuquerque, NM 87131
+	..{ucbvax | seismo!gatech | ihnp4!lanl}!unmvax!wampler
+
+
+   This version of TVX Copyright (c) 1986 by Bruce E. Wampler
+
+   Permission is hereby granted for free, unrestricted nonprofit
+   use of this software.  Please feel free to modify, distribute,
+   and share this software as long as you aren't making any money
+   from it.  If you want to use this code in a profit making environment,
+   please contact the author for permission.
+
+Unix RELEASE NOTES:
+
+********* Description of files included in distribution: *********
+
+	README 	- this file
+
+	tvx_ref1.doc - documentation, ready for 80 col, 10 cpi, 66 line printer
+	tvx_ref2.doc - 2nd part, use cat to combine 1 and 2
+	tvx_tut.doc - short beginner's tutorial
+
+	tvx.ref - text quick reference charts for TVX
+	vix.ref - quick reference chart for vi emulator
+	emax.ref - quick reference chart for emacs emulator
+
+
+	Makefile.BSD - Makefile for BSD unix build
+	Makefile.SYSV - Makefile for System V unix build
+
+	tvx_1.c	   - main part of code (part 1), mostly os/terminal independent
+	tvx_2.c	   - main part of code (part 2), mostly os/terminal independent
+	tvx_lex.c  - defaults, some os dependent stuff in here.  Major
+		     changes in defaults can be fixed by recompiling this file.
+	tvx_io.c   - almost all I/O, including screen, confined to this file.
+	tvx_lib.c  - misc library routines needed by TVX.
+	tvx_unix.c  - contains unix specific code, including termcap driver
+
+	tvx_defs.ic - #define's for version, os, terminal, defaults
+        tvx_glbl.ic - global data structures
+	tvx_term.ic - definitions for various terminals and systems
+
+
+	tvx_cfg.c   - used to build CONFIG.TVX file for -c switch
+	tvx_ptch.c  - used to apply CONFIG to TVX.EXE permanently
+
+----- Misc. files for other systems ------
+
+	tvx_make.bat - batch file to compile IBM-PC tvx with cii c-86
+	tvx_ibm.c  - IBM-PC screen driver
+
+	atari.info - misc files needed to build TVX on an Atari ST
+
+===========================================================================
