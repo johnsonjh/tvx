@@ -1,0 +1,4 @@
+.bat linguist-vendored
+.BAT linguist-vendored
+*.bat linguist-vendored
+*.BAT linguist-vendored
