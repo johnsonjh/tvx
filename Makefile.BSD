@@ -1,15 +1,6 @@
 ## Makefile for tvx
 DEST	      = .
 
-EXTHDRS	      = /usr/include/ctype.h \
-		/usr/include/sgtty.h \
-		/usr/include/stdio.h \
-		/usr/include/sys/ioctl.h \
-		/usr/include/sys/types.h \
-		/usr/include/sys/stat.h \
-		/usr/include/sys/ttychars.h \
-		/usr/include/sys/ttydev.h
-
 HDRS	      = tvx_glbl.ic\
 		tvx_defs.ic
 
@@ -69,7 +60,7 @@ tags:           $(HDRS) $(SRCS); @ctags $(HDRS) $(SRCS)
 
 update:		$(DEST)/$(PROGRAM)
 
-$(DEST)/$(PROGRAM): $(SRCS) $(HDRS) $(EXTHDRS)
+$(DEST)/$(PROGRAM): $(SRCS) $(HDRS)
 		@make -f $(MAKEFILE) DEST=$(DEST) install
 ###
 tvx_unix.o: tvx_defs.ic tvx_glbl.ic
