@@ -288,7 +288,7 @@ FORCETTY:
 #endif
 
 #ifdef SCR_BUF
-    char *malloc();
+    /* char *malloc(); */
 
     /* malloc the screen buffer */
     if ((Scrbuf = malloc(S_BUFSIZE)) == NULL)
@@ -650,7 +650,7 @@ DO_UNIX:
 	  {
 	    execve("/bin/mv",mvarg,environ);
             tverrb("Error trying to start mv utility");
-	    _exit(999);
+	    exit(999);
 	  }
 	wait(&status);
 	if (status > 255)		/* error return */

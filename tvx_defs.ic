@@ -85,6 +85,8 @@
 
 #else
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #endif
 
 /* ========> select other options by defining appropriate symbols <======== */
