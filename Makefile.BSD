@@ -18,7 +18,7 @@ LDFLAGS	      =
 CFLAGS        = -O\
 		-DTVX_EM
 
-LIBS	      = /usr/lib/libtermcap.a
+LIBS	      = -ltermcap
 
 LINKER	      = cc
 
@@ -46,7 +46,7 @@ SRCS	      = tvx_unix.c \
 
 all:		$(PROGRAM)
 
-$(PROGRAM):     $(OBJS) $(LIBS)
+$(PROGRAM):     $(OBJS)
 		@echo -n "Loading $(PROGRAM) ... "
 		@$(LINKER) $(LDFLAGS) $(OBJS) $(LIBS) -o $(PROGRAM)
 		@echo "done"
@@ -69,17 +69,14 @@ tags:           $(HDRS) $(SRCS); @ctags $(HDRS) $(SRCS)
 
 update:		$(DEST)/$(PROGRAM)
 
-$(DEST)/$(PROGRAM): $(SRCS) $(LIBS) $(HDRS) $(EXTHDRS)
+$(DEST)/$(PROGRAM): $(SRCS) $(HDRS) $(EXTHDRS)
 		@make -f $(MAKEFILE) DEST=$(DEST) install
 ###
-tvx_unix.o: /usr/include/ctype.h /usr/include/sys/ioctl.h \
-	/usr/include/sys/types.h /usr/include/sys/stat.h \
-	/usr/include/sys/ttychars.h /usr/include/sys/ttydev.h \
-	/usr/include/sgtty.h /usr/include/stdio.h tvx_defs.ic tvx_glbl.ic
-tvx_io.o: /usr/include/stdio.h tvx_defs.ic tvx_glbl.ic
-tvx_lex.o: /usr/include/stdio.h tvx_defs.ic tvx_glbl.ic
-tvx_1.o: /usr/include/stdio.h tvx_defs.ic tvx_glbl.ic
-tvx_2.o: /usr/include/stdio.h tvx_defs.ic tvx_glbl.ic
-tvx_edit.o: /usr/include/stdio.h tvx_defs.ic tvx_glbl.ic
-tvx_lib.o: /usr/include/stdio.h tvx_defs.ic
+tvx_unix.o: tvx_defs.ic tvx_glbl.ic
+tvx_io.o: tvx_defs.ic tvx_glbl.ic
+tvx_lex.o: tvx_defs.ic tvx_glbl.ic
+tvx_1.o: tvx_defs.ic tvx_glbl.ic
+tvx_2.o: tvx_defs.ic tvx_glbl.ic
+tvx_edit.o: tvx_defs.ic tvx_glbl.ic
+tvx_lib.o: tvx_defs.ic
 
